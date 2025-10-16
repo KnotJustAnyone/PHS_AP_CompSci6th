@@ -45,6 +45,31 @@ class poker_table:
         bet = 0
         return bet #A number for the size of the bet
 
-
-
-        
+#Tests ---------------------------------------------
+def test_best_hand():
+    table = poker_table()
+    hands = [
+        ['c8'], #8 high
+        ['c9','d9'], #pair of 9s
+        ['c9','c6'], #9 high
+        ['c6','c2'], #6 high
+        ['d3','c3','h3'], #Three of 3s
+        ['d3','c3','h4'], #pair of 3s
+        ['cj','d3','dj'], #pair of jacks
+        ['ck','d5','h2'], #king high
+        ['c7','d7','h7','s7'], #four of a kind, 7s
+        ['c7','d7','h7','ck']] #three 7s
+    print(f"Identifies high card v1: {table.best_hand(hands[0]) < table.best_hand(hands[2])}")
+    print(f"Identifies high card v2: {table.best_hand(hands[0]) > table.best_hand(hands[3])}")
+    print(f"Identifies high card v2: {table.best_hand(hands[2]) > table.best_hand(hands[3])}")
+    print(f"Identifies high card v3: {table.best_hand(hands[0]) < table.best_hand(hands[7])}")
+    print(f"Identifies pair beats high card v1: {table.best_hand(hands[1]) > table.best_hand(hands[2])}")
+    print(f"Identifies pair beats high card v2: {table.best_hand(hands[1]) > table.best_hand(hands[3])}")
+    print(f"Identifies pair beats high card v3: {table.best_hand(hands[1]) > table.best_hand(hands[7])}")
+    print(f"Identifies pair beats high card v4: {table.best_hand(hands[5]) > table.best_hand(hands[2])}")
+    print(f"Identifies pair beats high card v5: {table.best_hand(hands[5]) > table.best_hand(hands[3])}")
+    print(f"Identifies pair beats high card v6: {table.best_hand(hands[6]) > table.best_hand(hands[7])}")
+    print(f"Identifies better pair: {table.best_hand(hands[1]) > table.best_hand(hands[5])}")
+    print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
+    print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
+    print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
