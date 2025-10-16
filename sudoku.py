@@ -4,6 +4,9 @@ class sudoku_board:
     def __init__(self):
         sudoku_boards={"easy":[],"medium":[],"hard":[]}
         self.board=numpy.full(81,0).reshape(9,9)
+        print("What difficulty do you want to play at? (easy, medium, or hard)")
+        difficulty=input()
+        self.fullboard=sudoku_boards[difficulty][random.randrange(len(sudoku_boards[difficulty]))]
     def guess(self):
         print("What is your guess?")
         z=int(input())
