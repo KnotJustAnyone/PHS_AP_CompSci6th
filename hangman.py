@@ -29,11 +29,15 @@ class Hangman:
         pass
 
     def is_game_over(self):
-        #hi
-        #Checks if the game has ended due to either:
-        #- All letters guessed
-        #- Player has run out of attempts
-        #Returns True if the game is over, otherwise False.
+    
+        #Checks if the game has ended.
+        # Returns True if:
+        #- The word has been fully guessed, or
+        #- The player has no remaining attempts.
+        # Otherwise, returns False.
+            
+        return self.is_word_guessed() or self.remaining_attempts <= 0
+    
 
         pass
 
