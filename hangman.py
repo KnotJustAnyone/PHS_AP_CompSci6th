@@ -59,8 +59,8 @@ class Hangman:
     def get_remaining_attempts(self):
 
         #Returns how many incorrect guesses the player has left.
-
-        pass
+    
+        return self.remaining_attempts
 
     def reset_game(self):
 
