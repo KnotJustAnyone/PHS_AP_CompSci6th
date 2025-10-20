@@ -31,6 +31,41 @@ class wordle_board:
         # if so, return True and print out that the player has lost
         return
 
+    def _test_game_over():
+                # Set a known winning word to control the test
+        game.winning_word = "apple"
+        
+        #  Test 1: Win after correct 
+        print("Test 1: Player guesses the correct word")
+        game.guess_word("apple")  # Correct guess
+        print("game_over():", game.game_over())  # Should print True and "You won!"
+        print("Expected: True\n")
+        
+        #Test 2: Lose after 6 wrong guesses
+        print("Test 2: Player makes 6 incorrect guesses")
+        game = wordle_board()
+        game.winning_word = "apple"
+        
+        # Make 6 incorrect guesses
+        for i in range(6):
+            game.guess_word("stone")  # Wrong word
+        
+        print("game_over():", game.game_over())  # Should print True and "You lost!"
+        print("Expected: True\n")
+        
+        # --- Test 3: Game still in progress ---
+        print("Test 3: Game still in progress after 3 incorrect guesses")
+        game = wordle_board()
+        game.winning_word = "apple"
+        
+        # Make 3 incorrect guesses
+        for i in range(3):
+            game.guess_word("grape")
+        
+        print("game_over():", game.game_over())  # Should print False
+        print("Expected: False\n")
+
+
 def game():
     # use a while loop and game_over() to check the game is still going
     # ask the player for a word
