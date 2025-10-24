@@ -1,4 +1,5 @@
 import random
+import pytest
 
 class Hangman:
     def __init__(self, word_list):
@@ -85,3 +86,30 @@ class Hangman:
         #Could be implemented with pixel art or graphical output later.
 
         pass
+
+def test_choose_word_initializes_secret_and_display():
+    """Test that choose_word properly initializes the game state."""
+    word_list = ["Ethan", "Parker", "IsGreat"]
+    game = Hangman(word_list)
+    game.choose_word()
+
+    # Ensure a secret word was chosen from the provided list
+    assert game.secret_word in word_list
+
+    # Ensure display_word is initialized to underscores with correct length
+    assert len(game.display_word) == len(game.secret_word)
+    assert all(char == "_" for char in game.display_word)
+
+    # Ensure guessed_letters is empty at start
+    assert game.guessed_letters == []
+
+    # Ensure remaining_attempts reset to max_attempts
+    assert game.remaining_attempts == game.max_attempts
+
+
+def test_choose_word_raises_error_on_empty_list():
+    """Test that choose_word raises a ValueError when word_list is empty."""
+    game = Hangman([])
+    with pytest.raises(ValueError):
+        game.choose_word()
+        

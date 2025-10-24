@@ -21,7 +21,18 @@ class to_do_list:
     #title (str) = title of task
     #description (str) = description of task
     #due_date (str)= task deadline 
-    pass
+    task = {
+      "id": self.next_id,
+      "title": title,
+      "description": description,
+      "priority": priority,
+      "due_date": due_date,
+      "completed": False
+    }
+    
+    self.tasks.append(task) 
+    self.next_id += 1
+    print("Task added: "+title)
   
   def remove_task(self, task_id):
     #removes task from to-do list using its id
