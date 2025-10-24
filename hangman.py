@@ -20,7 +20,7 @@ class Hangman:
         pass
 
     def guess_letter(self, letter):
-        input()= letter #asks the player for a letter, then returns it
+        letter == input() #asks the player for a letter, then returns it
         if letter in secret_word:
             return True
         else:
