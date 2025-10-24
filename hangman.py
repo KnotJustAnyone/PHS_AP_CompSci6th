@@ -78,3 +78,26 @@ class Hangman:
         #Could be implemented with pixel art or graphical output later.
 
         pass
+
+#Tests--------
+ Checks if the entire secret word has been successfully guessed.
+    Uses clear if-then logic for readability.
+  
+Returns:
+        bool: True if display_word matches the secret_word (no underscores left),
+              False otherwise.
+ def setUp(self):
+        # Create a Hangman instance with a sample word list
+        self.game = Hangman(["apple", "banana", "cherry"])
+        self.game.secret_word = "apple"  # Set a known secret word for testing
+
+def test_word_fully_guessed(self):
+        """Should return True when the entire word is correctly guessed."""
+        self.game.display_word = "apple"  # All letters guessed
+        self.assertTrue(self.game.is_word_guessed())
+    
+def test_word_partially_guessed(self):
+        """Should return False when some letters are still missing."""
+        self.game.display_word = "app_e"
+        self.assertFalse(self.game.is_word_guessed())
+
