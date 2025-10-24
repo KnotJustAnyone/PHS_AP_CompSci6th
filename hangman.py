@@ -27,7 +27,28 @@ class Hangman:
         #- Decreases remaining_attempts if incorrect
    
         pass
+def guess_word(self, guess):
+    """
+    Let the player guess the entire word at once>
+    Returns: (bool, str) - (is_correct, message) 
+    """
+    if self. secret_word is None: 
+         return False, "No word chosen yet. Call choose_ word() first."
+    if self.is_game_over(): 
+        return False, "The game is already over." 
 
+    guess = guess.strip().lower ()
+    if not guess. isaplha():
+        return Flase, "Your guess should contain letters only."
+
+    if guess == self.secret_word: 
+        self.display_word = list(self.secret_word) 
+        return True, f"Corret! The word was'{self.secret_word}'."
+        else:
+            # Wrong guess costs one attempt
+            self.remaining_attempts -= 1
+            return False, f"'{guess}' is not the word. Attempts left: {self.remaining_attempts}"
+ 
     def is_game_over(self):
     
         #Checks if the game has ended.
