@@ -17,7 +17,13 @@ class Hangman:
 
         #Randomly selects a word from the word list and sets it as the secret word.
         #Also initializes the display_word with underscores.
-        pass
+        if not self.word_list:
+            raise ValueError("Word list is empty. Cannot choose a word.")
+        
+        self.secret_word = random.choice(self.word_list).lower()
+        self.display_word = ["_"] * len(self.secret_word)
+        self.guessed_letters = []
+        self.remaining_attempts = self.max_attempts
 
     def guess_letter(self, letter):
 
