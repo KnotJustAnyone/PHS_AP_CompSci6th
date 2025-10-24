@@ -20,6 +20,11 @@ class Hangman:
         pass
 
     def guess_letter(self, letter):
+        input()= letter #asks the player for a letter, then returns it
+        if letter in secret_word:
+            return True
+        else:
+            return False
 
         #Takes a single letter guessed by the player.
         #- Updates guessed_letters
@@ -42,7 +47,7 @@ class Hangman:
         pass
 
     def is_word_guessed(self):
-    
+     
         #Checks if the entire word has been successfully guessed.
         #Returns True if the display_word matches the secret_word.
        
