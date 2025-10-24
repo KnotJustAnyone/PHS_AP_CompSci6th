@@ -42,8 +42,23 @@ class poker_table:
 
     #Asks the player what they want to bet
     def player_bet(self,player,game_state):
-        bet = 0
-        return bet #A number for the size of the bet
+            # simple checks
+        if amount < table.min_bet:
+            raise ValueError(f"Bet {amount} is below minimum {table.min_bet}")
+        if amount > self.chips:
+            raise ValueError(f"Cannot bet {amount}; only {self.chips} chips available")
+        # perform bet
+        self.chips -= amount
+        self.current_bet += amount
+        table.pot += amount
+        # track last_bet / raise
+        if amount > table.last_bet:
+            table.last_bet = amount
+            table.was_raised = True
+        else:
+            # if equal or lower, maybe not a raise
+            table.was_raised = False  # or leave as is depending on logic
+
 
 #Tests ---------------------------------------------
 def test_best_hand():
@@ -73,3 +88,4 @@ def test_best_hand():
     print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
     print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
     print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
+
