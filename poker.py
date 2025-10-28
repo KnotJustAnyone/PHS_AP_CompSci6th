@@ -1,18 +1,19 @@
+from adityavpokerstrat import preflopstrategy, postflopstrategy, turnstrategy, riverstrategy
 class player():
-    def __init__(self):
-        self.holecards = []
-        self.communitycards = []
+    def __init__(self, stack, bigblinds, holecards, communitycards):
+        self.holecards = holecards
+        self.communitycards = communitycards
         self.handranking = 0
-        self.bigblinds =1
-        self.stack = 2
-        self.BBstack = self.stack/self.bigblinds
+        self.bigblind = bigblinds
+        self.stack = stack
+        self.BBstack = self.stack/self.bigblind
         self.handlog = []
-        # players individual strategies to determine action at each stage
-        self.preflopstrategy = ""
-        self.postflopstrategy = ""
-        self.turnstrategy = ""
-        self.riverstrategy = ""
 
+        # players individual strategies to determine action at each stage
+        self.preflopstrategy = preflopstrategy
+        self.postflopstrategy = postflopstrategy
+        self.turnstrategy = turnstrategy
+        self.riverstrategy = riverstrategy
     def rankhand(self):
         # ranks hand
         return None
