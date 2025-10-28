@@ -23,10 +23,13 @@ class wordle_board:
     
     def game_over():
         board_length = 0 # uses a variable to determine the length
+        chose_word = False # checks if the player has won
         for x in self.num_board: # loops through the number board
+            if x = [1,1,1,1,1] # checks if anything in the number board is [1,1,1,1,1]
             board_length+=1
-        # checks if anything in the number board is [1,1,1,1,1]
-        # if so, return True and print out that the player won
+        if chose_word == True:
+            print("you have won!")
+            return True
         # if not, continue
         # checks if the variable is greater than or equal to 6
         # if so, return True and print out that the player has lost
