@@ -1,4 +1,5 @@
 from adityavpokerstrat import preflopstrategy, postflopstrategy, turnstrategy, riverstrategy
+from treys import Card, Deck, Evaluator
 class player():
     def __init__(self, stack, bigblinds, holecards, communitycards):
         self.holecards = holecards
@@ -18,7 +19,24 @@ class player():
         # ranks hand
         return None
 
-    def gamestage(self):
-        # determine stage of game, and route corresponding strategy
-        self.handranking = self.rankhand()
-        return None
+def gamestage(self):
+        # Preflop
+        if (len(self.communitycards) == 0 and len(self.holecards) == 2):
+            print("Game is currently preflop, hole cards are",Card.print_pretty_cards(self.holecards),".")
+            print(self.BBstack)
+        # Postflop
+        elif (len(self.communitycards) == 3 and len(self.holecards) == 2):
+            print("Game is currently postflop, hole cards are",Card.print_pretty_cards(self.holecards),"and community cards are",Card.print_pretty_cards(self.communitycards),".")
+            print(self.BBstack)
+        # Turn
+        elif (len(self.communitycards) == 4 and len(self.holecards) == 2):
+            print("Game is currently turn, hole cards are",Card.print_pretty_cards(self.holecards),"and community cards are",Card.print_pretty_cards(self.communitycards),".")
+            print(self.BBstack)
+        # River
+        elif (len(self.communitycards) == 5 and len(self.holecards) == 2):
+            print("Game is currently river, hole cards are",Card.print_pretty_cards(self.holecards),"and community cards are",Card.print_pretty_cards(self.communitycards),".")
+            print(self.BBstack)
+        elif (len(self.communitycards) > 0 and len(self.holecards) < 2):
+            print("Error: Misdeal")
+        else:
+            print("Error")
