@@ -20,3 +20,9 @@ class sudoku_board:
     def congrats(self):
         #if everything is right, good job, pat on the back
         pass
+def testcheck():
+    board1=sudoku_board()
+    board1.one_sudoku_board = [[7,5,0,0,5,0,0,3,1],[0,9,1,0,0,4,2,7,6],[0,0,3,7,0,2,4,0,0],[2,0,0,0,0,0,0,4,7],[0,7,9,4,6,0,1,0,3],[4,0,0,3,0,0,6,8,9],[0,6,0,0,4,3,7,"Frank",2],[0,0,4,2,0,0,0,0,0],[0,0,0,0,0,9,3,0,4]]
+    board1.done_sudoku_board = [[7,4,2,9,5,6,8,3,1],[5,9,1,8,3,4,2,7,6],[6,8,3,7,1,2,4,9,5],[2,3,6,1,9,8,5,4,7],[8,7,9,4,6,5,1,2,3],[4,1,5,3,2,7,6,8,9],[9,6,8,5,4,3,7,1,2],[3,5,4,2,7,1,9,6,8],[1,2,7,6,8,9,3,5,4]]
+    test=[[2,9,False],[3,7,True],[1,1,False],[8,3,False]]
+    errortest=[["Frank","Sally","Error: list index out of range"],[0,0,"Error: list index out of range"]]
