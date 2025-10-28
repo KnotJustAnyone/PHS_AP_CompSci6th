@@ -22,8 +22,9 @@ class wordle_board:
         return
     
     def game_over():
-        # loops through the number board
-        # uses a variable to determine the length
+        board_length = 0 # uses a variable to determine the length
+        for x in self.num_board: # loops through the number board
+            board_length+=1
         # checks if anything in the number board is [1,1,1,1,1]
         # if so, return True and print out that the player won
         # if not, continue
