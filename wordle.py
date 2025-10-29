@@ -34,7 +34,6 @@ class wordle_board:
             if board_length >= 6: # checks if the variable is greater than or equal to 6
                 print("you have lost.")
                 return True
-        return
 
     def _test_game_over():
         game = wordle_board()
