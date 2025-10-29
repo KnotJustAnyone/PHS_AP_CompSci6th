@@ -8,7 +8,7 @@ class wordle_board:
         self.word_board = [] # words are added to this array as they are guessed
         self.num_board = [] # arrays of numbers are added to this array as words are guessed, indicating the correctness of each letter
     
-    def guess_word(word): # returns whether a word is eligible, and then checks the letters of the word, adding to the word and number boards.
+    def guess_word(self,word): # returns whether a word is eligible, and then checks the letters of the word, adding to the word and number boards.
         # checks the number of letters in the word
         # if not 5, returns false
         # otherwise, continue
@@ -21,21 +21,23 @@ class wordle_board:
         # prints out the two boards
         return
     
-    def game_over():
+    def game_over(self):
         board_length = 0 # uses a variable to determine the length
         chose_word = False # checks if the player has won
         for x in self.num_board: # loops through the number board
-            if x = [1,1,1,1,1] # checks if anything in the number board is [1,1,1,1,1]
-            board_length+=1
+            if x == [1,1,1,1,1]: # checks if anything in the number board is [1,1,1,1,1]
+                board_length+=1
         if chose_word == True:
             print("you have won!")
             return True
-        # if not, continue
-        # checks if the variable is greater than or equal to 6
-        # if so, return True and print out that the player has lost
+        else: # if not, continue
+            if board_length >= 6: # checks if the variable is greater than or equal to 6
+                print("you have lost.")
+                return True
         return
 
     def _test_game_over():
+        game = wordle_board()
                 # Set a known winning word to control the test
         game.winning_word = "apple"
         
@@ -47,7 +49,6 @@ class wordle_board:
         
         #Test 2: Lose after 6 wrong guesses
         print("Test 2: Player makes 6 incorrect guesses")
-        game = wordle_board()
         game.winning_word = "apple"
         
         # Make 6 incorrect guesses
@@ -75,3 +76,5 @@ def game():
     # ask the player for a word
     # check it using guess_word()
     return
+
+wordle_board._test_game_over()
