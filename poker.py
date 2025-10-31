@@ -15,11 +15,12 @@ class player():
         self.postflopstrategy = postflopstrategy
         self.turnstrategy = turnstrategy
         self.riverstrategy = riverstrategy
+
     def rankhand(self):
         # ranks hand
         return None
 
-def gamestage(self):
+    def gamestage(self):
         # Preflop
         if (len(self.communitycards) == 0 and len(self.holecards) == 2):
             print("Game is currently preflop, hole cards are",Card.print_pretty_cards(self.holecards),".")
@@ -34,9 +35,28 @@ def gamestage(self):
             print(self.BBstack)
         # River
         elif (len(self.communitycards) == 5 and len(self.holecards) == 2):
+            hand_value = Evaluator().evaluate(self.communitycards, self.holecards)
+            hand_class = Evaluator().get_rank_class(hand_value)
+            print(hand_value)
+            print(Evaluator().class_to_string(hand_class))
             print("Game is currently river, hole cards are",Card.print_pretty_cards(self.holecards),"and community cards are",Card.print_pretty_cards(self.communitycards),".")
             print(self.BBstack)
+            riverstrategy(self.BBstack,hand_value)
+        # Misdeal
         elif (len(self.communitycards) > 0 and len(self.holecards) < 2):
             print("Error: Misdeal")
         else:
             print("Error")
+        return None
+Testcards = Deck().draw(2)
+Communitycards = Deck().draw(5)
+player1 = player(100000,500,Testcards,Communitycards)
+player1.gamestage()
+# player2 = player(50000,500,["As","Ks"],["Ac","Ad","Kh","7h"])
+# player2.gamestage()
+# player3 = player(2000,500,["As","Ks"],["Ac","Ad","Kh","7h","Ah"])
+# player3.gamestage()
+# Lucas = player(1000000,500,["7s","2c"],[])
+# Lucas.gamestage()
+# misdealtest = player(13,500,["2s"],["3h"])
+# misdealtest.gamestage()
