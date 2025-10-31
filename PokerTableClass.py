@@ -117,6 +117,14 @@ class poker_table:
             self.was_raised = False  # or leave as is depending on logic
         return bet #A number for the size of the bet
 
+class Game_State:
+    def __init__(self, table):
+        self.t = table; self.pot = 0; self.cards = []; self.i = 0
+    def next(self): self.i = (self.i+1)%len(self.t.players)
+    def cur(self): return self.t.players[self.i]
+    def add_pot(self,a): self.pot += a
+    def add_cards(self,c): self.cards += c
+
 #Tests ---------------------------------------------
 def test_best_hand():
     table = poker_table()
@@ -145,5 +153,6 @@ def test_best_hand():
     print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
     print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
     print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
+
 
 
