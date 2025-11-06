@@ -25,8 +25,9 @@ class wordle_board:
         board_length = 0 # uses a variable to determine the length
         chose_word = False # checks if the player has won
         for x in self.num_board: # loops through the number board
+            board_length += 1
             if x == [1,1,1,1,1]: # checks if anything in the number board is [1,1,1,1,1]
-                board_length+=1
+                chose_word = True
         if chose_word == True:
             print("you have won!")
             return True
@@ -75,5 +76,3 @@ def game():
     # ask the player for a word
     # check it using guess_word()
     return
-
-wordle_board._test_game_over()
