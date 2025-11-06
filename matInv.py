@@ -27,21 +27,16 @@ class matrix:
             newMat=[]
             for i in self.mat[0]:
                 newMat.append([])
-            print(newMat)
             summand = 0
-            for i in range(len(self.mat[0])):
-                summand = 0
-                for j in range(len(self.mat[0])):
-                    print(self.mat[0][j],other_mat[j][i])
-                    summand+=(self.mat[0][j])*(other_mat[j][i])
-                newMat[i]+=[summand]
-            # for i in range(len(self.mat)):
-            #     summand2 = 0
-            #     for j in range(len(self.mat[0])):
-            #         summand2+=newMat[j+i]
-            #     self.mat[i]=[summand2]
-            # print(self.mat)
-            print(newMat)
+            for k in range(len(self.mat)):
+                for i in range(len(self.mat[0])):
+                    summand = 0
+                    for j in range(len(self.mat[0])):
+                        summand+=(self.mat[k][j])*(other_mat[j][i])
+                    newMat[i]+=[summand]
+            self.mat = newMat
+            self.trans()
+            print(self.mat)
 def trans_test():
     test = {"[[1, 1], [2, 2]]": matrix([[1,2],[1,2]]),
             "[[173, 3, 700], [802, 17, 1208374], [56, 212, 123]]":matrix([[173,802,56],[3,17,212],[700,1208374,123]]),
