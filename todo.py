@@ -46,10 +46,10 @@ class to_do_list:
       if task["id"]==task_id:
         #mark as completed!
         task["completed"]=True 
-        print("Task " + task[title] + "marked as complete")
+        print("Task " + task["title"] + "marked as complete")
         return #exits after finding and updating the task
     #if there is no task with the given id
-  print("No task found with id" + str(task_id))
+    print("No task found with id" + str(task_id))
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
