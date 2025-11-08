@@ -1,13 +1,13 @@
-
+print("This is the hangman game")
 class Hangman:
     def __init__(self, word_list):
-
+        print("hangman")
         #Initialize the Hangman game.
         #- word_list: list of words to randomly choose from for the game
         #- This function sets up the starting state of the game.
   
         self.word_list = word_list              # List of potential words to use
-        self.secret_word = None                 # The word to be guessed
+        self.secret_word = "cat"                 # The word to be guessed
         self.display_word = None                # The current state of the guessed word (e.g. "_ _ a _ _")
         self.guessed_letters = []               # List of letters guessed so far
         self.remaining_attempts = 6             # Number of incorrect guesses allowed
@@ -19,12 +19,16 @@ class Hangman:
         #Also initializes the display_word with underscores.
         pass
 
-    def guess_letter(self, letter):
-        letter == input() #asks the player for a letter, then returns it
-        if letter in secret_word:
+    def guess_letter(self):
+        print(type(self.secret_word))
+        letter = input() #asks the player for a letter, then returns it
+        if letter in self.secret_word:
+            print("True")
             return True
-        else:
+        if not letter in self.secret_word:
+            print("False")
             return False
+        
 
         #Takes a single letter guessed by the player.
         #- Updates guessed_letters
@@ -83,3 +87,6 @@ class Hangman:
         #Could be implemented with pixel art or graphical output later.
 
         pass
+
+my_guess = Hangman(["cat"])
+my_guess.guess_letter()
