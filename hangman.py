@@ -50,11 +50,14 @@ class Hangman:
         pass
 
     def is_word_guessed(self):
-    
-        #Checks if the entire word has been successfully guessed.
-        #Returns True if the display_word matches the secret_word.
-       
-        pass
+        missing_found = False # determines if any letters are missing
+        for letter in self.display_word:
+            if letter == "_":
+                missing_found = True # sets to true if a missing letter is found
+        if missing_found == True:
+            return False
+        else: # no missing letters found, game won
+            return True
 
     def get_display_word(self):
 
