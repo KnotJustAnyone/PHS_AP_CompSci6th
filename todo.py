@@ -45,7 +45,7 @@ class to_do_list:
       #check if task matches the id
       if task["id"]==task_id:
         #mark as completed!
-        task["completed"]=True 
+        task["completed"]=True; 
         print("Task " + task["title"] + "marked as complete")
         return #exits after finding and updating the task
     #if there is no task with the given id
