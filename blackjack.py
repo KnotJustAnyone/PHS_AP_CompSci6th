@@ -4,7 +4,7 @@ players = []
 def getting_players():
     pass
   
-def card_value(card):
+def card_value():
     pass
 
 class Player:
