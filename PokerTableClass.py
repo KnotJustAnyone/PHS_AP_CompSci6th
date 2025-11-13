@@ -81,18 +81,18 @@ class poker_table:
 
 
     def add_player(self, name, chips=0): #Set starting amount with "chips"
-    #Create and add a new player to the poker table.
-    player = {
-        "name": name,
-        "chips": chips,
-        "hand": [],
-        "current_bet": 0,
-        "folded": False
-    }
-    self.players.append(player)
-    if self.button_player is None:
-        self.button_player = player
-    return player
+        #Create and add a new player to the poker table.
+        player = {
+            "name": name,
+            "chips": chips,
+            "hand": [],
+            "current_bet": 0,
+            "folded": False
+        }
+        self.players.append(player)
+        if self.button_player is None:
+            self.button_player = player
+        return player
 
     def remove_player(self): #removes a player
         return None
@@ -156,6 +156,7 @@ def test_best_hand():
     print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
     print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
     print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
+
 
 
 
