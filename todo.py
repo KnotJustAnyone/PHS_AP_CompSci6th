@@ -36,7 +36,15 @@ class to_do_list:
   
   def remove_task(self, task_id):
     #removes task from to-do list using its id
-    pass
+    #loop through all the tasks to find one with a matching id
+    for task in self.tasks:
+      if task["id"]==task_id:
+        #remove the task
+        self.tasks.remove(task);
+        print("task " + task["title"] + " was successfully removed! :)")
+        return
+    #if no task with the given id is found:
+    print("No task found with id " + str(task_id) ":(")
   
   def complete(self, task_id):
     #marks task with the given id as completed
