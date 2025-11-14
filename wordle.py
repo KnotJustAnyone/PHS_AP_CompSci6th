@@ -72,17 +72,23 @@ class wordle_board:
                 print(self.num_board[x]) # prints the xth value of the number board
             return True
     
-    def game_over():
-        # loops through the number board
-        # uses a variable to determine the length
-        # checks if anything in the number board is [1,1,1,1,1]
-        # if so, return True and print out that the player won
-        # if not, continue
-        # checks if the variable is greater than or equal to 6
-        # if so, return True and print out that the player has lost
-        return
+    def game_over(self):
+        board_length = 0 # uses a variable to determine the length
+        chose_word = False # checks if the player has won
+        for x in self.num_board: # loops through the number board
+            board_length += 1
+            if x == [1,1,1,1,1]: # checks if anything in the number board is [1,1,1,1,1]
+                chose_word = True
+        if chose_word == True:
+            print("you have won!")
+            return True
+        else: # if not, continue
+            if board_length >= 6: # checks if the variable is greater than or equal to 6
+                print("you have lost.")
+                return True
 
     def _test_game_over():
+        game = wordle_board()
                 # Set a known winning word to control the test
         game.winning_word = "apple"
         
@@ -94,7 +100,6 @@ class wordle_board:
         
         #Test 2: Lose after 6 wrong guesses
         print("Test 2: Player makes 6 incorrect guesses")
-        game = wordle_board()
         game.winning_word = "apple"
         
         # Make 6 incorrect guesses
@@ -136,5 +141,3 @@ def game():
     # ask the player for a word
     # check it using guess_word()
     return
-
-print(wordle_board.test_guess_word(wordle_board))
