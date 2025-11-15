@@ -57,6 +57,9 @@ class Hangman:
         pass
 
     def get_display_word(self):
+        
+        print("After your last guess, the display word is now" self.display_word "You currently have" self.remaining_attempts "left!")
+
 
         #Returns the current display_word to show the player their progress.
 
