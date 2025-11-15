@@ -64,9 +64,12 @@ class Hangman:
 
     def get_guessed_letters(self):
 
+        print("Letters guessed so far are" guessed_letters)
+        
+        
         #Returns the list of letters the player has guessed so far.
 
-        pass
+        
 
     def get_remaining_attempts(self):
 
