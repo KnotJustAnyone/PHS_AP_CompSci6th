@@ -44,7 +44,11 @@ class to_do_list:
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
-    pass
+  if not self.tasks
+    print("No tasks in to-do list yet.")
+    for task in self.tasks:
+      status = "Completed" if task =["completed"] else: "Not Completed"
+    
   
   def update_task(self, task_id, title=None, description=None, 
   priority=None, deadline=None):
