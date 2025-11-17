@@ -80,8 +80,19 @@ class poker_table:
         return score
 
 
-    def add_player(self): #adds a new player at the table
-        return None
+    def add_player(self, name, chips=0): #Set starting amount with "chips"
+        #Create and add a new player to the poker table.
+        player = {
+            "name": name,
+            "chips": chips,
+            "hand": [],
+            "current_bet": 0,
+            "folded": False
+        }
+        self.players.append(player)
+        if self.button_player is None:
+            self.button_player = player
+        return player
 
     def remove_player(self, player): #removes a player
         self.players.remove(player)
