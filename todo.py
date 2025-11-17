@@ -52,7 +52,7 @@ class to_do_list:
     
     #add some tasks to test that it functions as intended
     todo.add_task("Finish homework", "Write English essay and complete science packet","Medium", "10-30-2025")
-    todo.add_task("Go to the store", "Buy toiletries, fruit, and bread", "High", "10-29-2025)
+    todo.add_task("Go to the store", "Buy toiletries, fruit, and bread", "High", "10-29-2025")
     todo.add_task("Make a PowerPoint presentation", "research background information and fix formatting", "Low", "11-10-2025")
 
     #call view_tasks() so that we can view tasks
