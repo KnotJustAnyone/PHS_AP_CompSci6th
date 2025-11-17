@@ -7,7 +7,7 @@ class Hangman:
         #- This function sets up the starting state of the game.
   
         self.word_list = word_list              # List of potential words to use
-        self.secret_word = "cat"                 # The word to be guessed
+        self.secret_word = None                 # The word to be guessed
         self.display_word = None                # The current state of the guessed word (e.g. "_ _ a _ _")
         self.guessed_letters = []               # List of letters guessed so far
         self.remaining_attempts = 6             # Number of incorrect guesses allowed
@@ -87,6 +87,3 @@ class Hangman:
         #Could be implemented with pixel art or graphical output later.
 
         pass
-
-my_guess = Hangman(["cat"])
-my_guess.guess_letter()
