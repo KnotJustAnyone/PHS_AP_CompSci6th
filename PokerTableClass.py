@@ -94,7 +94,8 @@ class poker_table:
             self.button_player = player
         return player
 
-    def remove_player(self): #removes a player
+    def remove_player(self, player): #removes a player
+        self.players.remove(player)
         return None
 
     def deal_round(self): #Goes through the steps of a poker round
@@ -156,8 +157,4 @@ def test_best_hand():
     print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
     print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
     print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
-
-
-
-
 
