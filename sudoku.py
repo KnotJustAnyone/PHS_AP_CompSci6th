@@ -7,6 +7,7 @@ class sudoku_board:
         print("What difficulty do you want to play at? (easy, medium, or hard)")
         difficulty=input()
         self.fullboard=sudoku_boards[difficulty][random.randrange(len(sudoku_boards[difficulty]))]
+        self.gameover=False
     def guess(self):
         print("What is your guess?")
         z=int(input())
@@ -18,8 +19,30 @@ class sudoku_board:
     def check(self,x,y):
         pass
     def congrats(self):
-        #if everything is right, good job, pat on the back
-        pass
+        j=1
+        i=1
+        x=0
+        while j <10:
+            while i<10:
+                if self.check(i,j)==True:
+                    x=x+1
+                    i=i+1
+                else:
+                    i=i+1
+            i=0
+            j=j+1
+        if x==81:
+            print("Congratulations! You won!")
+            self.gameover=True
+        else:
+            print("Do you want to check any spaces? (y/N)")
+            check=input()
+            if check=="y" or check=="Y":
+                self.check()
+    def gameplay(self):
+        while self.gameover==False:
+            self.guess()
+            self.congrats()
 def testcheck():
     board1=sudoku_board()
     board1.one_sudoku_board = [[7,5,0,0,5,0,0,3,1],[0,9,1,0,0,4,2,7,6],[0,0,3,7,0,2,4,0,0],[2,0,0,0,0,0,0,4,7],[0,7,9,4,6,0,1,0,3],[4,0,0,3,0,0,6,8,9],[0,6,0,0,4,3,7,"Frank",2],[0,0,4,2,0,0,0,0,0],[0,0,0,0,0,9,3,0,4]]
