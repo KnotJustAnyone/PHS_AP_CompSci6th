@@ -44,7 +44,7 @@ class to_do_list:
         print("task " + task["title"] + " was successfully removed! :)")
         return
     #if no task with the given id is found:
-    print("No task found with id " + str(task_id) ":(")
+    print("No task found with id " + str(task_id) + " :(")
   
   def complete(self, task_id):
     #marks task with the given id as completed
