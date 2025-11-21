@@ -4,10 +4,12 @@ except:
     print("Error importing from adityavpokerstrat, setting imports to None")
     preflopstrategy, postflopstrategy, turnstrategy, riverstrategy = None,None,None,None
 try:    
-    from treys import Card, Deck, Evaluator
+    from treys import Card, Evaluator
 except:
     print("Error importing from treys, setting imports to None")
-    Card, Deck, Evaluator = None,None,None
+    Card, Evaluator = None,None,None
+
+from deck_of_cards import Deck
 
 
 class player():
@@ -58,8 +60,9 @@ class player():
         else:
             print("Error")
         return None
-Testcards = Deck().draw(2)
-Communitycards = Deck().draw(5)
+testdeck = Deck(jokers = False)
+Testcards = testdeck.draw(2)
+Communitycards = testdeck.draw(5)
 player1 = player(100000,500,Testcards,Communitycards)
 player1.gamestage()
 # player2 = player(50000,500,["As","Ks"],["Ac","Ad","Kh","7h"])
