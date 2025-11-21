@@ -6,7 +6,7 @@ class wordle_board:
     num_board = [] # arrays of numbers are added to this array as words are guessed, indicating the correctness of each letter
     
     def __init__(self):
-        self.word_list = { # list of 5 letter english words
+        self.word_list = [ # list of 5 letter english words
             "river",
             "child",
             "basic",
@@ -32,7 +32,7 @@ class wordle_board:
             "sharp",
             "crowd",
             "toast"
-        }
+        ]
         self.winning_word = self.word_list[random.randint(0,len(self.word_list)-1)] # choose a word at random from array above
     
     def guess_word(self, word): # returns whether a word is eligible, and then checks the letters of the word, adding to the word and number boards.
@@ -70,6 +70,7 @@ class wordle_board:
             for x in range(0,len(self.word_board)): # loops through the word board and number board to print each value
                 print(self.word_board[x]) # prints the xth value of the word board
                 print(self.num_board[x]) # prints the xth value of the number board
+            print("////////////////////////////////////")
             return True
     
     def game_over(self):
@@ -77,14 +78,18 @@ class wordle_board:
         chose_word = False # checks if the player has won
         for x in self.num_board: # loops through the number board
             board_length += 1
-            if x == [1,1,1,1,1]: # checks if anything in the number board is [1,1,1,1,1]
+            if x == [2,2,2,2,2]: # checks if anything in the number board is [2,2,2,2,2]
                 chose_word = True
         if chose_word == True:
             print("you have won!")
+            self.word_board = []
+            self.num_board = []
             return True
         else: # if not, continue
             if board_length >= 6: # checks if the variable is greater than or equal to 6
                 print("you have lost.")
+                self.word_board = []
+                self.num_board = []
                 return True
 
     def _test_game_over():
@@ -123,11 +128,11 @@ class wordle_board:
 
     def test_guess_word(self): #returns false if the code returns the wrong thing, true if it returns the right thing
         board = self
-        if board.guess_word(board,"owen") == True or board.guess_word(board,"obingus") == True: # if the function returns true for an ineligible word
+        if board.guess_word("owen") == True or board.guess_word("obingus") == True: # if the function returns true for an ineligible word
             return False
         else:
             board.winning_word = "abbcd" # sets the winning word to abbcd
-            if board.guess_word(board,"abcbc") == False: # if it says abcbc is not allowed
+            if board.guess_word("abcbc") == False: # if it says abcbc is not allowed
                 return False
             else:
                 if board.word_board[-1] == "abcbc" and board.num_board[-1] == [2,2,1,1,0]: # if it gives the correct array for the word jhihy
@@ -137,7 +142,11 @@ class wordle_board:
 
 
 def game():
-    # use a while loop and game_over() to check the game is still going
-    # ask the player for a word
-    # check it using guess_word()
-    return
+    board = wordle_board()
+    while board.game_over() != True: # makes sure the game is still running
+        print("please enter your guess.")
+        guess = input() # saves the user input
+        if not board.guess_word(guess): # applies the guess, checks to make sure its valid
+            print("please enter a valid word with 5 letters.") # prints if invalid
+
+game()
