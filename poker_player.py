@@ -1,5 +1,15 @@
-from adityavpokerstrat import preflopstrategy, postflopstrategy, turnstrategy, riverstrategy
-from treys import Card, Deck, Evaluator
+try:
+    from adityavpokerstrat import preflopstrategy, postflopstrategy, turnstrategy, riverstrategy
+except:
+    print("Error importing from adityavpokerstrat, setting imports to None")
+    preflopstrategy, postflopstrategy, turnstrategy, riverstrategy = None,None,None,None
+try:    
+    from treys import Card, Deck, Evaluator
+except:
+    print("Error importing from treys, setting imports to None")
+    Card, Deck, Evaluator = None,None,None
+
+
 class player():
     def __init__(self, stack, bigblinds, holecards, communitycards):
         self.holecards = holecards
