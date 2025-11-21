@@ -1,4 +1,6 @@
-print("This is the hangman game")
+import random
+import pytest
+
 class Hangman:
     def __init__(self, word_list):
         print("hangman")
@@ -17,7 +19,13 @@ class Hangman:
 
         #Randomly selects a word from the word list and sets it as the secret word.
         #Also initializes the display_word with underscores.
-        pass
+        if not self.word_list:
+            raise ValueError("Word list is empty. Cannot choose a word.")
+        
+        self.secret_word = random.choice(self.word_list).lower()
+        self.display_word = ["_"] * len(self.secret_word)
+        self.guessed_letters = []
+        self.remaining_attempts = self.max_attempts
 
     def guess_letter(self):
         print(type(self.secret_word))
@@ -87,3 +95,30 @@ class Hangman:
         #Could be implemented with pixel art or graphical output later.
 
         pass
+
+def test_choose_word_initializes_secret_and_display():
+    """Test that choose_word properly initializes the game state."""
+    word_list = ["Ethan", "Parker", "IsGreat"]
+    game = Hangman(word_list)
+    game.choose_word()
+
+    # Ensure a secret word was chosen from the provided list
+    assert game.secret_word in word_list
+
+    # Ensure display_word is initialized to underscores with correct length
+    assert len(game.display_word) == len(game.secret_word)
+    assert all(char == "_" for char in game.display_word)
+
+    # Ensure guessed_letters is empty at start
+    assert game.guessed_letters == []
+
+    # Ensure remaining_attempts reset to max_attempts
+    assert game.remaining_attempts == game.max_attempts
+
+
+def test_choose_word_raises_error_on_empty_list():
+    """Test that choose_word raises a ValueError when word_list is empty."""
+    game = Hangman([])
+    with pytest.raises(ValueError):
+        game.choose_word()
+        
