@@ -76,7 +76,7 @@ def trans_test():
                 print('test failed: transposes unequal.')
         except Exception as e:
             print("error:",str(e)+"; expected:",i)
-# matrix([[1,0],[0,1],[0,0]]).mat_mult([[1,2,3],[1,2,3]])
-matrix1 = matrix([[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5],[1,2,3,4,5]])
-matrix1.trans()
-matrix1.print()
+matrix([[1,2],[3,4]]).mat_mult([[1,2],[3,4]])
+# matrix1 = matrix([[1,2],[1,2]])
+# matrix1.trans()
+# print(matrix1.mat)
