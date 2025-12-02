@@ -1,5 +1,4 @@
 #Minesweeper: Function and test for placing mines
-
 import random
 def Minesweeper(a,b,c):
         return 
