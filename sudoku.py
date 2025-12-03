@@ -1,12 +1,41 @@
 import numpy
 import random
+
+sudoku_boards={"easy":{"start":[
+                                [0,0,0,2,6,0,7,0,1],
+                                [6,8,0,0,7,0,0,9,0],
+                                [1,9,0,0,0,4,5,0,0],
+                                [8,2,0,1,0,0,0,4,0],
+                                [0,0,4,6,0,2,9,0,0],
+                                [0,5,0,0,0,3,0,2,8],
+                                [0,0,9,3,0,0,0,7,4],
+                                [0,4,0,0,5,0,0,3,6],
+                                [7,0,3,0,1,8,0,0,0]],
+                       "answer":[
+                                [4,3,5,2,6,9,7,8,1],
+                                [6,8,2,5,7,1,4,9,3],
+                                [1,9,7,8,3,4,5,6,2],
+                                [8,2,6,1,9,5,3,4,5],
+                                [3,7,4,6,8,2,9,1,5],
+                                [9,5,1,7,4,3,6,2,8],
+                                [5,1,9,3,2,6,8,7,4],
+                                [2,4,8,9,5,7,1,3,6],
+                                [7,6,3,4,1,8,2,5,9]
+                       ]},"medium":[],"hard":[]}
+
 class sudoku_board:
     def __init__(self):
-        sudoku_boards={"easy":[],"medium":[],"hard":[]}
-        self.board=numpy.full(81,0).reshape(9,9)
-        print("What difficulty do you want to play at? (easy, medium, or hard)")
-        difficulty=input()
-        self.fullboard=sudoku_boards[difficulty][random.randrange(len(sudoku_boards[difficulty]))]
+        difficulty = None
+        while not difficulty:
+            print("What difficulty do you want to play at? (easy, medium, or hard)")
+            difficulty=input()
+            if difficulty not in sudoku_boards.keys() or len(sudoku_boards[difficulty]) == 0:
+                print("No boards available of that difficulty, try another")
+                difficulty = None
+        board=sudoku_boards[difficulty][random.randrange(len(sudoku_boards[difficulty]))]
+        self.answer = board['answer']
+        self.start = board['start']
+        self.current = [[n for n in row] for row in board['start']]
         self.gameover=False
     def guess(self):
         print("What is your guess?")
@@ -60,5 +89,3 @@ def testforguess():
     print("Input #4: (4,alice,4)")
     print("Input #5: (three, bob, pizza")
     print("If the code works correctly, only the first input should work.")
-
-testforguess()
