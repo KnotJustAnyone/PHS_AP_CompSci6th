@@ -39,6 +39,14 @@ def _place_mines(self):
             r = random.randint(0, self.rows - 1)
             c = random.randint(0, self.cols - 1)
             self.mines.add((r, c))
+                
+def check_win(self):
+        #Win when all non-mine cells are revealed
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if (r, c) not in self.mines and not self.revealed[r][c]:
+                    return False
+        return True
 
 
           
