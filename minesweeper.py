@@ -2,6 +2,28 @@
 import random
 def Minesweeper(a,b,c):
         return 
+
+DIFFICULTIES = {
+    "easy":    (8, 8, 10),
+    "medium":  (12, 12, 20),
+    "hard":    (16, 16, 40)
+#where each entry is given as (rows, columns, mines)
+}
+
+class Minesweeper:
+    def __init__(self, rows, cols, num_mines):
+        self.rows = rows
+        self.cols = cols
+        self.num_mines = num_mines
+
+        # Game state
+        self.board = [['0' for _ in range(cols)] for _ in range(rows)]
+        self.revealed = [[False for _ in range(cols)] for _ in range(rows)]
+        self.flags = [[False for _ in range(cols)] for _ in range(rows)]
+        self.mines = set()
+
+        self._place_mines()
+        self._calculate_numbers()
         
 def test_place_mines(self):
         game2 = Minesweeper(6, 6, 8)
@@ -17,4 +39,6 @@ def _place_mines(self):
             r = random.randint(0, self.rows - 1)
             c = random.randint(0, self.cols - 1)
             self.mines.add((r, c))
+
+
           
