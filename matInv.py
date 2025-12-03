@@ -69,8 +69,10 @@ def trans_test():
             "[['e', 'y'], ['e', 'y']]":matrix([["e","e"],["y","y"]])}
     for i in test:
         try:
+            print(f'Testing {test[i]}')
             test[i].trans()
             if str(test[i].mat)==i:
+                
                 print('yay!')
             else:
                 print('test failed: transposes unequal.')
