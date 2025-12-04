@@ -121,4 +121,35 @@ def test_choose_word_raises_error_on_empty_list():
     game = Hangman([])
     with pytest.raises(ValueError):
         game.choose_word()
+
+Test -----
+def test_is_game_over_when_word_guessed():
+    """Game should be over when the word is fully guessed."""
+    game = Hangman(["test"])
+    game.secret_word = "test"
+    game.display_word = list("test")  # fully guessed
+    game.remaining_attempts = 3       # still have tries left
+
+    assert game.is_game_over() is True
+
+
+def test_is_game_over_when_no_attempts_left():
+    """Game should be over when remaining_attempts reaches 0."""
+    game = Hangman(["test"])
+    game.secret_word = "test"
+    game.display_word = ["_", "_", "_", "_"]  # not guessed
+    game.remaining_attempts = 0
+
+    assert game.is_game_over() is True
+
+
+def test_is_game_over_when_not_finished():
+    """Game should continue when the word is not guessed and attempts remain."""
+    game = Hangman(["test"])
+    game.secret_word = "test"
+    game.display_word = ["t", "_", "_", "t"]
+    game.remaining_attempts = 4
+
+    assert game.is_game_over() is False
+
         
