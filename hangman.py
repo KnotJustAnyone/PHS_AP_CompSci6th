@@ -3,7 +3,7 @@ import pytest
 
 class Hangman:
     def __init__(self, word_list):
-
+        print("hangman")
         #Initialize the Hangman game.
         #- word_list: list of words to randomly choose from for the game
         #- This function sets up the starting state of the game.
@@ -27,7 +27,16 @@ class Hangman:
         self.guessed_letters = []
         self.remaining_attempts = self.max_attempts
 
-    def guess_letter(self, letter):
+    def guess_letter(self):
+        print(type(self.secret_word))
+        letter = input() #asks the player for a letter, then returns it
+        if letter in self.secret_word:
+            print("True")
+            return True
+        if not letter in self.secret_word:
+            print("False")
+            return False
+        
 
         #Takes a single letter guessed by the player.
         #- Updates guessed_letters
