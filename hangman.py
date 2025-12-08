@@ -50,25 +50,31 @@ def guess_word(self, guess):
             return False, f"'{guess}' is not the word. Attempts left: {self.remaining_attempts}"
  
     def is_game_over(self):
-    
-        #Checks if the game has ended.
-        # Returns True if:
-        #- The word has been fully guessed, or
-        #- The player has no remaining attempts.
-        # Otherwise, returns False.
-            
-        return self.is_word_guessed() or self.remaining_attempts <= 0
-    
+         """
+    Checks if the game has ended.
+    Returns True if:
+    - The word has been fully guessed, or
+    - The player has no remaining attempts.
+    Otherwise, returns False.
+    """
+    return self.is_word_guessed() or self.remaining_attempts <= 0
 
-        pass
+            
 
     def is_word_guessed(self):
-    
+        
         #Checks if the entire word has been successfully guessed.
         #Returns True if the display_word matches the secret_word.
-       
-        pass
+       """
+    Checks if the entire word has been successfully guessed.
+    Returns True if the display_word matches the secret_word.
+    """
+    # If display_word is a list of characters, like ['h', '_', 'n', 'g', 'm', 'a', 'n']:
+    return "".join(self.display_word) == self.secret_word
+    # If in your code display_word is already a string, use this instead:
+    # return self.display_word == self.secret_word
 
+    
     def get_display_word(self):
 
         #Returns the current display_word to show the player their progress.
