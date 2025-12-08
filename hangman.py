@@ -124,4 +124,20 @@ def test_choose_word_raises_error_on_empty_list():
     game = Hangman([])
     with pytest.raises(ValueError):
         game.choose_word()
-        
+
+
+def choose_word(self):
+    """Randomly selects a word from the word list and initializes game state."""
+    if not self.word_list:
+        raise ValueError("Word list is empty. Cannot choose a word.")
+
+    # Choose and initialize the secret word
+    self.secret_word = random.choice(self.word_list).lower()
+
+    # Create display_word with underscores
+    self.display_word = ["_"] * len(self.secret_word)
+
+    # Reset guesses and attempts
+    self.guessed_letters = []
+    self.remaining_attempts = self.max_attempts
+
