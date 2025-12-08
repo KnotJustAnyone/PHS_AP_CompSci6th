@@ -39,12 +39,12 @@ def guess_word(self, guess):
 
     guess = guess.strip().lower ()
     if not guess. isaplha():
-        return Flase, "Your guess should contain letters only."
+        return False, "Your guess should contain letters only."
 
     if guess == self.secret_word: 
         self.display_word = list(self.secret_word) 
         return True, f"Corret! The word was'{self.secret_word}'."
-        else:
+    else:
             # Wrong guess costs one attempt
             self.remaining_attempts -= 1
             return False, f"'{guess}' is not the word. Attempts left: {self.remaining_attempts}"
