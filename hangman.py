@@ -75,7 +75,6 @@ class Hangman:
         return self.remaining_attempts
 
     def reset_game(self):
-        self.word_list = word_list 
 
         #the secret word shouldn't be the same as last round
         #maybe take it out of the array of possible words in the word list?
@@ -90,7 +89,7 @@ class Hangman:
 
         #should check if the previous word has been guessed or if the player is out of attempts
         #could also be if the player is stuck and wants to start ovr
-        if is_game_over():   
+        if self.is_game_over():   
             self.choose_word()
         #will reset hangman and choose a new word to play
         
