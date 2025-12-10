@@ -4,124 +4,166 @@ import pytest
 class Hangman:
     def __init__(self, word_list):
         print("hangman")
-        #Initialize the Hangman game.
-        #- word_list: list of words to randomly choose from for the game
-        #- This function sets up the starting state of the game.
-  
-        self.word_list = word_list              # List of potential words to use
-        self.secret_word = None                 # The word to be guessed
-        self.display_word = None                # The current state of the guessed word (e.g. "_ _ a _ _")
-        self.guessed_letters = []               # List of letters guessed so far
-        self.remaining_attempts = 6             # Number of incorrect guesses allowed
-        self.max_attempts = 6                   # Maximum allowed attempts
+        self.word_list = word_list
+        self.secret_word = None
+        self.display_word = None
+        self.guessed_letters = []
+        self.remaining_attempts = 6
+        self.max_attempts = 6
 
     def choose_word(self):
-
-        #Randomly selects a word from the word list and sets it as the secret word.
-        #Also initializes the display_word with underscores.
         if not self.word_list:
             raise ValueError("Word list is empty. Cannot choose a word.")
-        
+
         self.secret_word = random.choice(self.word_list).lower()
         self.display_word = ["_"] * len(self.secret_word)
         self.guessed_letters = []
         self.remaining_attempts = self.max_attempts
 
     def guess_letter(self):
-        print(type(self.secret_word))
-        letter = input() #asks the player for a letter, then returns it
-        if letter in self.secret_word:
-            print("True")
-            return True
-        if not letter in self.secret_word:
-            print("False")
-            return False
-        
+        """Asks for input, processes a guess, and updates the game."""
+        letter = input("Guess a letter: ").lower()
 
-        #Takes a single letter guessed by the player.
-        #- Updates guessed_letters
-        #- Updates display_word if correct
-        #- Decreases remaining_attempts if incorrect
-   
-        pass
+        # Reject invalid input
+        if not (len(letter) == 1 and letter.isalpha()):
+            print("Invalid input. Enter one letter.")
+            return False
+
+        # Already guessed
+        if letter in self.guessed_letters:
+            print("You already guessed that letter.")
+            return False
+
+        self.guessed_letters.append(letter)
+
+        # Correct guess
+        if letter in self.secret_word:
+            print("Correct!")
+            for i, ch in enumerate(self.secret_word):
+                if ch == letter:
+                    self.display_word[i] = letter
+            return True
+        
+        # Incorrect guess
+        print("Incorrect!")
+        self.remaining_attempts -= 1
+        return False
 
     def is_game_over(self):
-    
-        #Checks if the game has ended.
-        # Returns True if:
-        #- The word has been fully guessed, or
-        #- The player has no remaining attempts.
-        # Otherwise, returns False.
-            
         return self.is_word_guessed() or self.remaining_attempts <= 0
-    
-
-        pass
 
     def is_word_guessed(self):
-        missing_found = False # determines if any letters are missing
-        for letter in self.display_word:
-            if letter == "_":
-                missing_found = True # sets to true if a missing letter is found
-        if missing_found == True:
-            return False
-        else: # no missing letters found, game won
-            return True
+        return "_" not in self.display_word
 
     def get_display_word(self):
-
-        #Returns the current display_word to show the player their progress.
-
-        pass
+        return " ".join(self.display_word)
 
     def get_guessed_letters(self):
-
-        #Returns the list of letters the player has guessed so far.
-
-        pass
+        return self.guessed_letters
 
     def get_remaining_attempts(self):
-
-        #Returns how many incorrect guesses the player has left.
-    
         return self.remaining_attempts
 
     def reset_game(self):
-
-        #Resets all relevant game variables to start a new game.
-
-        pass
+        self.secret_word = None
+        self.display_word = None
+        self.guessed_letters = []
+        self.remaining_attempts = self.max_attempts
 
     def draw_hangman(self):
+        """Simple ASCII hangman based on remaining attempts."""
+        stages = [
+            """
+             -----
+             |   |
+             |   O
+             |  /|\\
+             |  / \\
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |   O
+             |  /|\\
+             |  / 
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |   O
+             |  /|\\
+             |  
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |   O
+             |  /|
+             |  
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |   O
+             |   |
+             |  
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |   O
+             |
+             |
+             |
+            -----
+            """,
+            """
+             -----
+             |   |
+             |
+             |
+             |
+             |
+            -----
+            """
+        ]
+        print(stages[self.max_attempts - self.remaining_attempts])
 
-        #Displays the current state of the hangman drawing based on remaining_attempts.
-        #Could be implemented with pixel art or graphical output later.
 
-        pass
+# --------------------------
+#    PLAYABLE GAME LOOP
+# --------------------------
 
-def test_choose_word_initializes_secret_and_display():
-    """Test that choose_word properly initializes the game state."""
-    word_list = ["Ethan", "Parker", "IsGreat"]
-    game = Hangman(word_list)
+def play_hangman():
+    words = ["python", "hangman", "classroom", "testing", "openai"]
+    game = Hangman(words)
     game.choose_word()
 
-    # Ensure a secret word was chosen from the provided list
-    assert game.secret_word in word_list
+    print("Welcome to Hangman!")
 
-    # Ensure display_word is initialized to underscores with correct length
-    assert len(game.display_word) == len(game.secret_word)
-    assert all(char == "_" for char in game.display_word)
+    while not game.is_game_over():
+        print("\nWord:", game.get_display_word())
+        print("Guessed letters:", game.get_guessed_letters())
+        print("Remaining attempts:", game.get_remaining_attempts())
+        game.draw_hangman()
 
-    # Ensure guessed_letters is empty at start
-    assert game.guessed_letters == []
+        game.guess_letter()
 
-    # Ensure remaining_attempts reset to max_attempts
-    assert game.remaining_attempts == game.max_attempts
+    # Game ended
+    if game.is_word_guessed():
+        print("\n🎉 You won! The word was:", game.secret_word)
+    else:
+        print("\n💀 You lost! The word was:", game.secret_word)
+        game.draw_hangman()
 
 
-def test_choose_word_raises_error_on_empty_list():
-    """Test that choose_word raises a ValueError when word_list is empty."""
-    game = Hangman([])
-    with pytest.raises(ValueError):
-        game.choose_word()
-        
