@@ -124,4 +124,32 @@ def test_choose_word_raises_error_on_empty_list():
     game = Hangman([])
     with pytest.raises(ValueError):
         game.choose_word()
-        
+
+def test_get_display_word_returns_string():
+    """get_display_word should return the display_word as a spaced string."""
+    game = Hangman(["apple"])
+    game.secret_word = "apple"
+    game.display_word = ["a", "_", "p", "_", "_"]
+
+    result = game.get_display_word()
+    assert isinstance(result, str)
+    assert result == "a _ p _ _"
+
+def test_get_display_word_with_all_underscores():
+    """Should correctly display all underscores when no letters guessed."""
+    game = Hangman(["test"])
+    game.secret_word = "test"
+    game.display_word = ["_", "_", "_", "_"]
+
+    assert game.get_display_word() == "_ _ _ _"
+
+def test_get_display_word_after_full_guess():
+    """Should display full word when all letters guessed."""
+    game = Hangman(["dog"])
+    game.secret_word = "dog"
+    game.display_word = ["d", "o", "g"]
+
+    assert game.get_display_word() == "d o g"
+    
+def get_display_word(self):
+    return " ".join(self.display_word)
