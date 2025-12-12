@@ -48,7 +48,16 @@ class to_do_list:
   
   def complete(self, task_id):
     #marks task with the given id as completed
-    pass
+    #look through all tasks
+    for task in self.tasks:
+      #check if task matches the id
+      if task["id"]==task_id:
+        #mark as completed!
+        task["completed"]=True; 
+        print("Task " + task["title"] + "marked as complete")
+        return #exits after finding and updating the task
+    #if there is no task with the given id
+    print("No task found with id" + str(task_id))
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
