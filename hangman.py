@@ -124,4 +124,82 @@ def test_choose_word_raises_error_on_empty_list():
     game = Hangman([])
     with pytest.raises(ValueError):
         game.choose_word()
-        
+    
+
+# --- helper to mock input() ---
+class MockInput:
+    def __init__(self, value):
+        self.value = value
+    def __call__(self, *args, **kwargs):
+        return self.value
+
+
+def run_test(name, func):
+    try:
+        func()
+        print(f"[PASS] {name}")
+    except AssertionError as e:
+        print(f"[FAIL] {name}")
+        print("       ", e)
+
+
+# --- TESTS ---
+
+def test_guess_letter_correct():
+    game = Hangman(["apple"])
+    game.secret_word = "apple"
+
+    mock = MockInput("a")
+    original_input = __builtins__.input
+    __builtins__.input = mock
+
+    result = game.guess_letter()
+
+    __builtins__.input = original_input  # restore input
+
+    assert result is True
+
+
+def test_guess_letter_incorrect():
+    game = Hangman(["apple"])
+    game.secret_word = "apple"
+
+    mock = MockInput("z")
+    original_input = __builtins__.input
+    __builtins__.input = mock
+
+    result = game.guess_letter()
+
+    __builtins__.input = original_input
+
+    assert result is False
+
+
+def test_guess_letter_prints_type():
+    game = Hangman(["apple"])
+    game.secret_word = "apple"
+
+    mock = MockInput("a")
+    original_input = __builtins__.input
+    __builtins__.input = mock
+
+    # capture printed text
+    import io, sys
+    captured = io.StringIO()
+    original_stdout = sys.stdout
+    sys.stdout = captured
+
+    game.guess_letter()
+
+    sys.stdout = original_stdout
+    __builtins__.input = original_input
+
+    output = captured.getvalue()
+    assert "class 'str'" in output
+
+
+# --- RUN ALL TESTS ---
+if __name__ == "__main__":
+    run_test("Correct guess returns True", test_guess_letter_correct)
+    run_test("Incorrect guess returns False", test_guess_letter_incorrect)
+    run_test("Prints type of secret_word", test_guess_letter_prints_type)
