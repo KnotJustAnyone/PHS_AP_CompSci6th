@@ -74,12 +74,28 @@ class to_do_list:
     assert "Go to the store" in titles
     assert "Make a Powerpoint presentation" in titles
     print("test_view_tasks passed :D")
-  
-  def update_task(self, task_id, title=None, description=None, 
-  priority=None, deadline=None):
+
+  def update_task(self, task_id, title=None, description=None, priority=None, deadline=None):
     #updates parameters of the given task
-    #only parameters made (not None) will be updated
-    pass
+    #only parameters made NOT None will be updated
+    for task in self.tasks:
+      if task["id"]==task_id:
+        #update field parameters only if new values were provided
+        if title is not None:
+          task["title"] = title
+        if description is not None:
+          task["description"] = description
+        if priority is not None:
+          task["priority"] = priority
+        if deadline is not None:
+          task["due_date"] = deadline
+          
+      print(f"Task {task_id} has been successfuly updated! :V")
+      return task #returns the updated task to test if it was properly updated
+    
+    #in case no task is found
+    print("No task found with id " + str(task_id) + " :\")
+    return None
     
   def clear_completed(self):
     #removes completed tasks
