@@ -91,8 +91,12 @@ class to_do_list:
     pass
     
   def clear_completed(self):
-    #removes completed tasks
-    pass
+    new_list = []
+    for task in self.tasks:
+        if not task["completed"]:
+            new_list.append(task)
+    self.tasks = new_list
+
     
     
     
