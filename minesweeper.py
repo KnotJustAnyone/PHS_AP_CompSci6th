@@ -59,6 +59,14 @@ class Minesweeper:
                     if (r, c) not in self.mines and not self.revealed[r][c]:
                         return False
             return True
+        
+     #This is the code for the testing part of the project. 
+     def setUp(self):
+        # A small 5x5 board used for predictable testing
+        self.game = Minesweeper(5, 5, 0)
+        self.game.mines = {(1,1), (3,3)}
+        self.game._calculate_numbers()
+
 
 
           
