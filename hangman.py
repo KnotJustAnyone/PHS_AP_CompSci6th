@@ -3,7 +3,7 @@ import pytest
 
 class Hangman:
     def __init__(self, word_list):
-
+        print("hangman")
         #Initialize the Hangman game.
         #- word_list: list of words to randomly choose from for the game
         #- This function sets up the starting state of the game.
@@ -27,7 +27,16 @@ class Hangman:
         self.guessed_letters = []
         self.remaining_attempts = self.max_attempts
 
-    def guess_letter(self, letter):
+    def guess_letter(self):
+        print(type(self.secret_word))
+        letter = input() #asks the player for a letter, then returns it
+        if letter in self.secret_word:
+            print("True")
+            return True
+        if not letter in self.secret_word:
+            print("False")
+            return False
+        
 
         #Takes a single letter guessed by the player.
         #- Updates guessed_letters
@@ -50,23 +59,32 @@ class Hangman:
         pass
 
     def is_word_guessed(self):
-    
-        #Checks if the entire word has been successfully guessed.
-        #Returns True if the display_word matches the secret_word.
-       
-        pass
+        missing_found = False # determines if any letters are missing
+        for letter in self.display_word:
+            if letter == "_":
+                missing_found = True # sets to true if a missing letter is found
+        if missing_found == True:
+            return False
+        else: # no missing letters found, game won
+            return True
 
     def get_display_word(self):
+        
+        print("After your last guess, the display word is now " + self.display_word + ". You currently have " + self.remaining_attempts + " left!")
+
 
         #Returns the current display_word to show the player their progress.
 
         pass
 
-    def get_guessed_letters(self):
+    def self.get_guessed_letters(self):
 
+        print("Letters guessed so far are" + guessed_letters)
+        
+        
         #Returns the list of letters the player has guessed so far.
 
-        pass
+        
 
     def get_remaining_attempts(self):
 
@@ -76,9 +94,24 @@ class Hangman:
 
     def reset_game(self):
 
-        #Resets all relevant game variables to start a new game.
+        #the secret word shouldn't be the same as last round
+        #maybe take it out of the array of possible words in the word list?
+        self.secret_word = None  
 
-        pass
+        #letters guessed is reset to an empty array
+        self.guessed_letters = []
+
+        #attempts are reset also 
+        self.remaining_attempts = 6
+        self.max_attempts = 6
+
+        #should check if the previous word has been guessed or if the player is out of attempts
+        #could also be if the player is stuck and wants to start ovr
+        if self.is_game_over():   
+            self.choose_word()
+        #will reset hangman and choose a new word to play
+        
+        
 
     def draw_hangman(self):
 
@@ -94,10 +127,10 @@ def test_choose_word_initializes_secret_and_display():
     game.choose_word()
 
     # Ensure a secret word was chosen from the provided list
-    assert game.secret_word in word_list
+    assert self.secret_word in word_list
 
     # Ensure display_word is initialized to underscores with correct length
-    assert len(game.display_word) == len(game.secret_word)
+    assert len(game.display_word) == len(self.secret_word)
     assert all(char == "_" for char in game.display_word)
 
     # Ensure guessed_letters is empty at start
