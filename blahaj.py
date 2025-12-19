@@ -40,6 +40,16 @@ elif args.text != None:
     if args.background:
         if args.individual:
             for j in range(len(string)):
+                cprint(string[j],black,arr[j%len(arr)], end="")
+        elif args.words:
+            split = string.split(" ")
+            for j in range(len(split)-1):
+                cprint(split[j],arr[j%len(arr)], end=" ")
+                cprint(split[len(split)-1],black,arr[len(split)%len(arr)], end="")
+
+    else:
+        if args.individual:
+            for j in range(len(string)):
                 cprint(string[j], arr[j%len(arr)], end="")
         elif args.words:
             split = string.split(" ")
