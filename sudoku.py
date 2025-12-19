@@ -53,7 +53,7 @@ class sudoku_board:
             check=input()
             if check=="y" or check=="Y":
                 self.check()
-                if self.check()==True:
+                if self.chosenboard[0][k][l]==self.chosenboard[1][k][l]:
                     print("This space is correct.")
                 else:
                     print("Not quite right.")
