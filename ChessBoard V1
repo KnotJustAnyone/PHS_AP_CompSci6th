@@ -41,5 +41,6 @@ function mousePressed() {
     let rank = 8 - row; 
     
     algebraicPos = file + rank;
+    console.log("Square Selected:"+algebraicPos);
   }
 }
