@@ -61,7 +61,10 @@ class to_do_list:
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
-    pass
+  if not self.tasks
+    print("No tasks in to-do list yet.")
+    for task in self.tasks:
+      status = "Completed" if task =["completed"] else: "Not Completed"
     
   def test_view_tasks():
     #create a todo list
@@ -91,8 +94,12 @@ class to_do_list:
     pass
     
   def clear_completed(self):
-    #removes completed tasks
-    pass
+    new_list = []
+    for task in self.tasks:
+        if not task["completed"]:
+            new_list.append(task)
+    self.tasks = new_list
+
     
     
     

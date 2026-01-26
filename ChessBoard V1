@@ -1,0 +1,46 @@
+let tileSize;
+let selectedSquare = { x: -1, y: -1 };
+let algebraicPos = "";
+
+function setup() {
+  createCanvas(400, 400);
+  tileSize = width / 8;
+}
+
+function draw() {
+  background(220);
+  
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      fill((x + y) % 2 === 0 ? 255 : 100);
+      if (selectedSquare.x === x && selectedSquare.y === y) {
+        stroke(255, 0, 0);
+        strokeWeight(3);  
+      } else {
+        stroke(0);       
+        strokeWeight(2);  
+      }
+      
+      rect(x * tileSize, y * tileSize, tileSize, tileSize);
+    }
+  }
+
+  noStroke();
+  fill(0);
+
+}
+
+function mousePressed() {
+  let col = floor(mouseX / tileSize);
+  let row = floor(mouseY / tileSize);
+  
+  if (col >= 0 && col < 8 && row >= 0 && row < 8) {
+    selectedSquare = { x: col, y: row };
+    
+    let file = char(97 + col); 
+    let rank = 8 - row; 
+    
+    algebraicPos = file + rank;
+    console.log("Square Selected:"+algebraicPos);
+  }
+}
