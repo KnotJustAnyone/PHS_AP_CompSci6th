@@ -36,6 +36,20 @@ class Minesweeper:
                 r = random.randint(0, self.rows - 1)
                 c = random.randint(0, self.cols - 1)
                 self.mines.add((r, c))
+
+    #replacing and then removing flags, but can't flag the cells thatare revealed
+    def flag(self, r, c):
+        if self.revealed[r][c]:
+            return 
+        self.flags[r][c] = not self.flags[r][c]
+                
+     def _calculate_numbers(self):
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if (r, c) in self.mines:
+                    self.board[r][c] = 'M'
+                else:
+                    self.board[r][c] = str(self._count_adjacent_mines(r, c))
                     
     def check_win(self):
             #Win when all non-mine cells are revealed
@@ -44,6 +58,15 @@ class Minesweeper:
                     if (r, c) not in self.mines and not self.revealed[r][c]:
                         return False
             return True
+        
+     #This is the code for the testing part of the project. 
+     def setUp(self):
+        # A small 5x5 board used for predictable testing
+        self.game = Minesweeper(5, 5, 0)
+        self.game.mines = {(1,1), (3,3)}
+        self.game._calculate_numbers()
+
+
     def _count_adjacent_mines(self, r, c):
         """Count mines around (r, c)."""
         count = 0
