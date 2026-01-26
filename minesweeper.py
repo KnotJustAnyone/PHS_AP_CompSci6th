@@ -14,7 +14,6 @@ class Minesweeper:
         self.cols = cols
         self.num_mines = num_mines
 
-        # Game state
         self.board = [['0' for _ in range(cols)] for _ in range(rows)]
         self.revealed = [[False for _ in range(cols)] for _ in range(rows)]
         self.flags = [[False for _ in range(cols)] for _ in range(rows)]
@@ -45,6 +44,26 @@ class Minesweeper:
                     if (r, c) not in self.mines and not self.revealed[r][c]:
                         return False
             return True
-
+    def _count_adjacent_mines(self, r, c):
+        """Count mines around (r, c)."""
+        count = 0
+        for dr in [-1, 0, 1]:
+            for dc in [-1, 0, 1]:
+                if dr == 0 and dc == 0:
+                    continue
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                    if (nr, nc) in self.mines:
+                        count += 1
+        return count
+        
+    def _calculate_numbers(self):
+        """Fill the board with numbers based on mine positions."""
+        for r in range(self.rows):
+            for c in range(self.cols):
+                if (r, c) in self.mines:
+                    self.board[r][c] = 'M'
+                else:
+                    self.board[r][c] = str(self._count_adjacent_mines(r, c))
 
           
