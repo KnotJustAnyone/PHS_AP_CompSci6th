@@ -19,6 +19,7 @@ def print_board(board):
     print("  1 2 3 4 5 6 7")
     #sets up display board, column numbers are listed underneath
 
+print_board(board)
 column = int(input("Choose a column (1-7):"))-1
 #asks user to choose a column to drop the play piece
 
