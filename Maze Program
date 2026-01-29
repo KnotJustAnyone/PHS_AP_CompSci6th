@@ -1,0 +1,18 @@
+# Maze Game - Week 1
+# Display the maze
+
+maze = [
+"##########",
+"#P       #",
+"# ###### #",
+"#        #",
+"# ###### #",
+"#      E #",
+"##########"
+]
+
+def print_maze(maze):
+	for row in maze:
+		print(row)
+
+print_maze(maze)

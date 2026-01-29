@@ -69,16 +69,22 @@ class Hangman:
             return True
 
     def get_display_word(self):
+        
+        print("After your last guess, the display word is now " + self.display_word + ". You currently have " + self.remaining_attempts + " left!")
+
 
         #Returns the current display_word to show the player their progress.
 
         pass
 
-    def get_guessed_letters(self):
+    def self.get_guessed_letters(self):
 
+        print("Letters guessed so far are" + guessed_letters)
+        
+        
         #Returns the list of letters the player has guessed so far.
 
-        pass
+        
 
     def get_remaining_attempts(self):
 
@@ -88,9 +94,24 @@ class Hangman:
 
     def reset_game(self):
 
-        #Resets all relevant game variables to start a new game.
+        #the secret word shouldn't be the same as last round
+        #maybe take it out of the array of possible words in the word list?
+        self.secret_word = None  
 
-        pass
+        #letters guessed is reset to an empty array
+        self.guessed_letters = []
+
+        #attempts are reset also 
+        self.remaining_attempts = 6
+        self.max_attempts = 6
+
+        #should check if the previous word has been guessed or if the player is out of attempts
+        #could also be if the player is stuck and wants to start ovr
+        if self.is_game_over():   
+            self.choose_word()
+        #will reset hangman and choose a new word to play
+        
+        
 
     def draw_hangman(self):
 
@@ -106,10 +127,10 @@ def test_choose_word_initializes_secret_and_display():
     game.choose_word()
 
     # Ensure a secret word was chosen from the provided list
-    assert game.secret_word in word_list
+    assert self.secret_word in word_list
 
     # Ensure display_word is initialized to underscores with correct length
-    assert len(game.display_word) == len(game.secret_word)
+    assert len(game.display_word) == len(self.secret_word)
     assert all(char == "_" for char in game.display_word)
 
     # Ensure guessed_letters is empty at start
@@ -145,3 +166,31 @@ def get_guessed_letters_test():
 
 
         
+def test_get_display_word_returns_string():
+    """get_display_word should return the display_word as a spaced string."""
+    game = Hangman(["apple"])
+    game.secret_word = "apple"
+    game.display_word = ["a", "_", "p", "_", "_"]
+
+    result = game.get_display_word()
+    assert isinstance(result, str)
+    assert result == "a _ p _ _"
+
+def test_get_display_word_with_all_underscores():
+    """Should correctly display all underscores when no letters guessed."""
+    game = Hangman(["test"])
+    game.secret_word = "test"
+    game.display_word = ["_", "_", "_", "_"]
+
+    assert game.get_display_word() == "_ _ _ _"
+
+def test_get_display_word_after_full_guess():
+    """Should display full word when all letters guessed."""
+    game = Hangman(["dog"])
+    game.secret_word = "dog"
+    game.display_word = ["d", "o", "g"]
+
+    assert game.get_display_word() == "d o g"
+    
+def get_display_word(self):
+    return " ".join(self.display_word)
