@@ -146,6 +146,26 @@ def test_choose_word_raises_error_on_empty_list():
     with pytest.raises(ValueError):
         game.choose_word()
 
+def get_guessed_letters_test():
+    # Test that get_guessed_letters properly returns a list of guessed letters
+    game = Hangman(["apple"])
+    game.choose_word()
+
+    # Ensure that the list of guessed letters is initially empty
+    assert game.get_guessed_letters() == []
+
+    # Pretend player guessed some letters
+    game.guessed_letters = ['a', 'e', 's']
+
+    # Test that the function properly returns an updated list of all guessed letters
+    assert game.get_guessed_letters() == ['a','e','s']
+
+    
+
+
+
+
+        
 def test_get_display_word_returns_string():
     """get_display_word should return the display_word as a spaced string."""
     game = Hangman(["apple"])
