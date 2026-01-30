@@ -1,18 +1,55 @@
-# Maze Game - Week 1
-# Display the maze
+# Maze Game - Week 2
+# Player movement and wall detection
 
 maze = [
-"##########",
-"#P       #",
-"# ###### #",
-"#        #",
-"# ###### #",
-"#      E #",
-"##########"
+    list("##########"),
+    list("#P       #"),
+    list("# ###### #"),
+    list("#        #"),
+    list("# ###### #"),
+    list("#      E #"),
+    list("##########")
 ]
 
 def print_maze(maze):
-	for row in maze:
-		print(row)
+    for row in maze:
+        print("".join(row))
 
-print_maze(maze)
+# Find player starting position
+player_row = 0
+player_col = 0
+for r in range(len(maze)):
+    for c in range(len(maze[r])):
+        if maze[r][c] == "P":
+            player_row = r
+            player_col = c
+
+while True:
+    print_maze(maze)
+    move = input("Move (W/A/S/D, Q to quit): ").lower()
+
+    if move == "q":
+        break
+
+    new_row, new_col = player_row, player_col
+
+    if move == "w":
+        new_row -= 1
+    elif move == "s":
+        new_row += 1
+    elif move == "a":
+        new_col -= 1
+    elif move == "d":
+        new_col += 1
+
+    if maze[new_row][new_col] == "#":
+        print("You hit a wall!")
+    else:
+        maze[player_row][player_col] = " "
+        player_row, player_col = new_row, new_col
+
+        if maze[player_row][player_col] == "E":
+            print("You reached the exit! You win!")
+            break
+
+        maze[player_row][player_col] = "P"
