@@ -126,7 +126,7 @@ def test_choose_word_raises_error_on_empty_list():
         game.choose_word()
 
 
-Tests ------
+#Tests ------
 def test_get_remaining_attempts_initial():
     """Ensure get_remaining_attempts returns the correct initial value."""
     word_list = ["test"]
