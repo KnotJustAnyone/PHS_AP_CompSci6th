@@ -190,7 +190,7 @@ def play_hangman():
     assert game.secret_word in words
 
     # Ensure display_word is initialized to underscores with correct length
-    assert len(game.display_word) == len(self.secret_word)
+    assert len(game.display_word) == len(game.secret_word)
     assert all(char == "_" for char in game.display_word)
 
     while not game.is_game_over():
