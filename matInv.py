@@ -12,10 +12,28 @@ class matrix:
                 mat2[i][j]=self.mat[j][i]
         self.mat = mat2
         self.isTrans = True
-    def minor(self):
-        pass
+    def minor(self,x,y):
+        if len(self.mat[0])==len(self.mat):
+            newMat = []
+            for i in range(len(self.mat)):
+                if i!=x:
+                    newRow = []
+                    for j in range(len(self.mat[i])):
+                        if j!=y:
+                            newRow+=[self.mat[i][j]]
+                    newMat+=[newRow]
+        else:
+            pass
+        matrix1 = matrix(newMat)
+        return matrix1.det()
     def det(self):
-        pass
+        if len(self.mat) == 2:
+                return self.mat[1][1]*self.mat[0][0]-self.mat[1][0]*self.mat[0][1]
+        else:
+            sum = 0
+            for i in range(len(self.mat)):
+                sum+=self.mat[0][i]*((-1)**(i))*(self.minor(0,i))
+            return sum
     def adj(self):
         pass
     def inv(self):
