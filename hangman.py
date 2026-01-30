@@ -214,6 +214,53 @@ def test_choose_word_raises_error_on_empty_list():
     with pytest.raises(ValueError):
         game.choose_word()
 
+
+#Tests ------
+def test_get_remaining_attempts_initial():
+    """Ensure get_remaining_attempts returns the correct initial value."""
+    word_list = ["test"]
+    game = Hangman(word_list)
+    game.choose_word()
+
+    assert game.get_remaining_attempts() == game.max_attempts
+
+
+def test_get_remaining_attempts_after_wrong_guess(monkeypatch):
+    """Ensure remaining attempts decrease after a wrong guess."""
+    word_list = ["apple"]
+    game = Hangman(word_list)
+    game.choose_word()
+
+    # Force user input to be a wrong guess
+    monkeypatch.setattr("builtins.input", lambda: "z")
+
+    # Call guess_letter() which should reduce attempts
+    game.guess_letter()
+
+    assert game.get_remaining_attempts() == game.max_attempts - 1
+
+
+def test_get_remaining_attempts_after_correct_guess(monkeypatch):
+    """Ensure remaining attempts do not decrease after a correct guess."""
+    word_list = ["banana"]
+    game = Hangman(word_list)
+    game.choose_word()
+
+    correct_letter = game.secret_word[0]  # choose a known correct letter
+    monkeypatch.setattr("builtins.input", lambda: correct_letter)
+
+    game.guess_letter()
+
+    # Should remain unchanged
+    assert game.get_remaining_attempts() == game.max_attempts
+
+
+def test_get_remaining_attempts_matches_internal_state():
+    """Ensure the getter returns the internal value even after manual change."""
+    game = Hangman(["hello"])
+    game.remaining_attempts = 3  # simulate game progress manually
+    assert game.get_remaining_attempts() == 3
+   
 def get_guessed_letters_test():
     # Test that get_guessed_letters properly returns a list of guessed letters
     game = Hangman(["apple"])
