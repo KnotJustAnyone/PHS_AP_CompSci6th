@@ -68,9 +68,9 @@ class Hangman:
 
         pass
 
-    def self.get_guessed_letters(self):
+    def get_guessed_letters(self):
 
-        print("Letters guessed so far are" + guessed_letters)
+        print("Letters guessed so far are" + self.guessed_letters)
         
         
         #Returns the list of letters the player has guessed so far.
@@ -186,18 +186,18 @@ def play_hangman():
 
     print("Welcome to Hangman!")
 
-    while not game.is_game_over():
-        print("\nWord:", game.get_display_word())
-        print("Guessed letters:", game.get_guessed_letters())
-        print("Remaining attempts:", game.get_remaining_attempts())
-        game.draw_hangman()
     # Ensure a secret word was chosen from the provided list
-    assert self.secret_word in word_list
+    assert game.secret_word in words
 
     # Ensure display_word is initialized to underscores with correct length
     assert len(game.display_word) == len(self.secret_word)
     assert all(char == "_" for char in game.display_word)
 
+    while not game.is_game_over():
+        print("\nWord:", game.get_display_word())
+        print("Guessed letters:", game.get_guessed_letters())
+        print("Remaining attempts:", game.get_remaining_attempts())
+        game.draw_hangman()
         game.guess_letter()
 
     # Game ended
