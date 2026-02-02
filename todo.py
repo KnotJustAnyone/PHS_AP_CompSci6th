@@ -61,10 +61,10 @@ class to_do_list:
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
-  if not self.tasks
-    print("No tasks in to-do list yet.")
+    if not self.tasks:
+      print("No tasks in to-do list yet.")
     for task in self.tasks:
-      status = "Completed" if task =["completed"] else: "Not Completed"
+      status = "Completed" if task == ["completed"] else "Not Completed"
     
   def test_view_tasks():
     #create a todo list
@@ -106,7 +106,7 @@ class to_do_list:
       return task #returns the updated task to test if it was properly updated
     
     #in case no task is found
-    print("No task found with id " + str(task_id) + " :\")
+    print("No task found with id " + str(task_id) + " :\\")
     return None
     
   def clear_completed(self):
