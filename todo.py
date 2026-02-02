@@ -110,12 +110,14 @@ class to_do_list:
     return None
     
   def clear_completed(self):
+    #removes tasks marked as completed
     new_list = []
     for task in self.tasks:
-        if not task["completed"]:
-            new_list.append(task)
+      if not task["completed"]:
+        new_list.append(task)
+    removed = len(self.tasks) - len(new_list)
     self.tasks = new_list
+    print(f"{removed} completed task(s) removed.")
 
-    
     
     
