@@ -24,6 +24,58 @@ class Hangman:
         """Asks for input, processes a guess, and updates the game."""
         letter = input("Guess a letter: ").lower()
 
+        #Takes a single letter guessed by the player.
+        #- Updates guessed_letters
+        #- Updates display_word if correct
+        #- Decreases remaining_attempts if incorrect
+   
+        pass
+def guess_word(self, guess):
+    """
+    Let the player guess the entire word at once>
+    Returns: (bool, str) - (is_correct, message) 
+    """
+    if self. secret_word is None: 
+         return False, "No word chosen yet. Call choose_ word() first."
+    if self.is_game_over(): 
+        return False, "The game is already over." 
+
+    guess = guess.strip().lower ()
+    if not guess. isaplha():
+        return False, "Your guess should contain letters only."
+
+    if guess == self.secret_word: 
+        self.display_word = list(self.secret_word) 
+        return True, f"Corret! The word was'{self.secret_word}'."
+    else:
+            # Wrong guess costs one attempt
+            self.remaining_attempts -= 1
+            return False, f"'{guess}' is not the word. Attempts left: {self.remaining_attempts}"
+ 
+    def is_game_over(self):
+         """
+    Checks if the game has ended.
+    Returns True if:
+    - The word has been fully guessed, or
+    - The player has no remaining attempts.
+    Otherwise, returns False.
+    """
+    return self.is_word_guessed() or self.remaining_attempts <= 0
+
+            
+
+    def is_word_guessed(self):
+        
+        #Checks if the entire word has been successfully guessed.
+        #Returns True if the display_word matches the secret_word.
+       """
+    Checks if the entire word has been successfully guessed.
+    Returns True if the display_word matches the secret_word.
+    """
+    # If display_word is a list of characters, like ['h', '_', 'n', 'g', 'm', 'a', 'n']:
+    return "".join(self.display_word) == self.secret_word
+    # If in your code display_word is already a string, use this instead:
+    # return self.display_word == self.secret_word
         # Reject invalid input
         if not (len(letter) == 1 and letter.isalpha()):
             print("Invalid input. Enter one letter.")
@@ -55,6 +107,7 @@ class Hangman:
     def is_word_guessed(self):
         return "_" not in self.display_word
 
+    
     def get_display_word(self):
         return " ".join(self.display_word)
 
