@@ -24,10 +24,78 @@ class poker_table:
         hand_value = 0
         return hand_value #A number identifying the strength of the hand
 
-    def add_player(self): #adds a new player at the table
-        return None
+    from collections import Counter
 
-    def remove_player(self): #removes a player
+    def evaluate_hand(hand_str):
+        # Parse hand: e.g. "AS KS QS JS TS" -> [('A','S'), ('K','S'), ...]
+        cards = hand_str.split()
+        ranks = [c[0] for c in cards]
+        suits = [c[1] for c in cards]
+        
+        # Map ranks to values
+        rank_map = {'2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8,
+                    '9':9, 'T':10, 'J':11, 'Q':12, 'K':13, 'A':14}
+        values = sorted([rank_map[r] for r in ranks])
+        
+        # Check for Ace-low straight (A,2,3,4,5)
+        is_ace_low_straight = values == [2, 3, 4, 5, 14]
+        if is_ace_low_straight:
+            values = [1, 2, 3, 4, 5]
+        
+        # Count occurrences of each rank
+        counts = Counter(values)
+        count_values = sorted(counts.values(), reverse=True)
+        unique_values = sorted(counts.keys(), reverse=True)
+        
+        # Determine hand type
+        is_flush = len(set(suits)) == 1
+        is_straight = all(values[i] - values[i-1] == 1 for i in range(1,5))
+        
+        if is_flush and is_straight and max(values) == 14:
+            rank = 9  # Royal Flush
+        elif is_flush and is_straight:
+            rank = 8  # Straight Flush
+        elif count_values == [4, 1]:
+            rank = 7  # Four of a Kind
+        elif count_values == [3, 2]:
+            rank = 6  # Full House
+        elif is_flush:
+            rank = 5  # Flush
+        elif is_straight:
+            rank = 4  # Straight
+        elif count_values == [3, 1, 1]:
+            rank = 3  # Three of a Kind
+        elif count_values == [2, 2, 1]:
+            rank = 2  # Two Pair
+        elif count_values == [2, 1, 1, 1]:
+            rank = 1  # One Pair
+        else:
+            rank = 0  # High Card
+        
+        # Return numeric score that reflects both type and tiebreakers
+        # Example: (rank, sorted card values by frequency then rank)
+        sorted_values = sorted(values, key=lambda x: (counts[x], x), reverse=True)
+        tiebreaker = sum(v * (15**i) for i, v in enumerate(sorted_values))
+        score = rank * (15**5) + tiebreaker
+        return score
+
+
+    def add_player(self, name, chips=0): #Set starting amount with "chips"
+        #Create and add a new player to the poker table.
+        player = {
+            "name": name,
+            "chips": chips,
+            "hand": [],
+            "current_bet": 0,
+            "folded": False
+        }
+        self.players.append(player)
+        if self.button_player is None:
+            self.button_player = player
+        return player
+
+    def remove_player(self, player): #removes a player
+        self.players.remove(player)
         return None
 
     def deal_round(self): #Goes through the steps of a poker round
@@ -43,7 +111,31 @@ class poker_table:
     #Asks the player what they want to bet
     def player_bet(self,player,game_state):
         bet = 0
+             # simple checks
+        if amount < self.min_bet:
+            raise ValueError(f"Bet {amount} is below minimum {self.min_bet}")
+        if amount > player.chips:
+            raise ValueError(f"Cannot bet {amount}; only {player.chips} chips available")
+        # perform bet
+        player.chips -= amount
+        player.current_bet += amount
+        self.pot += amount
+        # track last_bet / raise
+        if amount > self.last_bet:
+            self.last_bet = amount
+            self.was_raised = True
+        else:
+            # if equal or lower, maybe not a raise
+            self.was_raised = False  # or leave as is depending on logic
         return bet #A number for the size of the bet
+
+class Game_State:
+    def __init__(self, table):
+        self.t = table; self.pot = 0; self.cards = []; self.i = 0
+    def next(self): self.i = (self.i+1)%len(self.t.players)
+    def cur(self): return self.t.players[self.i]
+    def add_pot(self,a): self.pot += a
+    def add_cards(self,c): self.cards += c
 
 #Tests ---------------------------------------------
 def test_best_hand():
@@ -73,3 +165,4 @@ def test_best_hand():
     print(f"Identifies three of a kind beats pair: {table.best_hand(hands[4]) > table.best_hand(hands[6])}")
     print(f"Identifies better three of a kind: {table.best_hand(hands[4]) < table.best_hand(hands[9])}")
     print(f"Identifies four of a kind beats three of a kind: {table.best_hand(hands[8]) > table.best_hand(hands[9])}")
+
