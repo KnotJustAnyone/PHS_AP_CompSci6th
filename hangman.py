@@ -122,7 +122,7 @@ def test_choose_word_raises_error_on_empty_list():
     with pytest.raises(ValueError):
         game.choose_word()
 
-Test -----
+#Test -----
 def test_is_game_over_when_word_guessed():
     """Game should be over when the word is fully guessed."""
     game = Hangman(["test"])
