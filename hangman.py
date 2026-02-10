@@ -24,58 +24,67 @@ class Hangman:
         """Asks for input, processes a guess, and updates the game."""
         letter = input("Guess a letter: ").lower()
 
-        # Reject invalid input
-        if not (len(letter) == 1 and letter.isalpha()):
-            print("Invalid input. Enter one letter.")
-            return False
+        #Takes a single letter guessed by the player.
+        #- Updates guessed_letters
+        #- Updates display_word if correct
+        #- Decreases remaining_attempts if incorrect
+   
+        pass
+    def guess_word(self, guess):
+        """
+        Let the player guess the entire word at once>
+        Returns: (bool, str) - (is_correct, message) 
+        """
+        if self. secret_word is None: 
+            return False, "No word chosen yet. Call choose_ word() first."
+        if self.is_game_over(): 
+            return False, "The game is already over." 
 
-        # Already guessed
-        if letter in self.guessed_letters:
-            print("You already guessed that letter.")
-            return False
+        guess = guess.strip().lower ()
+        if not guess. isaplha():
+            return False, "Your guess should contain letters only."
 
-        self.guessed_letters.append(letter)
-
-        # Correct guess
-        if letter in self.secret_word:
-            print("Correct!")
-            for i, ch in enumerate(self.secret_word):
-                if ch == letter:
-                    self.display_word[i] = letter
-            return True
-        
-        # Incorrect guess
-        print("Incorrect!")
-        self.remaining_attempts -= 1
-        return False
-
+        if guess == self.secret_word: 
+            self.display_word = list(self.secret_word) 
+            return True, f"Corret! The word was'{self.secret_word}'."
+        else:
+                # Wrong guess costs one attempt
+                self.remaining_attempts -= 1
+                return False, f"'{guess}' is not the word. Attempts left: {self.remaining_attempts}"
+ 
     def is_game_over(self):
+        """
+        Checks if the game has ended.
+        Returns True if:
+        - The word has been fully guessed, or
+        - The player has no remaining attempts.
+        Otherwise, returns False.
+        """
         return self.is_word_guessed() or self.remaining_attempts <= 0
+
+            
+
+    def is_word_guessed(self):
+        """
+        Checks if the entire word has been successfully guessed.
+        Returns True if the display_word matches the secret_word.
+        """
+        return "".join(self.display_word) == self.secret_word
 
     def is_word_guessed(self):
         return "_" not in self.display_word
 
+    
     def get_display_word(self):
         return " ".join(self.display_word)
 
     def get_guessed_letters(self):
         return self.guessed_letters
         
-        print("After your last guess, the display word is now " + self.display_word + ". You currently have " + self.remaining_attempts + " left!")
-
-
-        #Returns the current display_word to show the player their progress.
-
-        pass
 
     def get_guessed_letters(self):
-
-        print("Letters guessed so far are" + self.guessed_letters)
-        
-        
         #Returns the list of letters the player has guessed so far.
-
-        
+        print("Letters guessed so far are" + self.guessed_letters)
 
     def get_remaining_attempts(self):
         return self.remaining_attempts
