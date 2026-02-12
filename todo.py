@@ -48,21 +48,76 @@ class to_do_list:
   
   def complete(self, task_id):
     #marks task with the given id as completed
-    pass
+    #look through all tasks
+    for task in self.tasks:
+      #check if task matches the id
+      if task["id"]==task_id:
+        #mark as completed!
+        task["completed"]=True; 
+        print("Task " + task["title"] + "marked as complete")
+        return #exits after finding and updating the task
+    #if there is no task with the given id
+    print("No task found with id" + str(task_id))
   
   def view_tasks(self):
     #displays all the tasks and details (including complete/incomplete)
-    pass
-  
-  def update_task(self, task_id, title=None, description=None, 
-  priority=None, deadline=None):
+    if not self.tasks:
+      print("No tasks in to-do list yet.")
+    for task in self.tasks:
+      status = "Completed" if task == ["completed"] else "Not Completed"
+    
+  def test_view_tasks():
+    #create a todo list
+    todo=to_do_list()
+    
+    #add some tasks to test that it functions as intended
+    todo.add_task("Finish homework", "Write English essay and complete science packet","Medium", "10-30-2025")
+    todo.add_task("Go to the store", "Buy toiletries, fruit, and bread", "High", "10-29-2025")
+    todo.add_task("Make a PowerPoint presentation", "Research background information and fix formatting", "Low", "11-10-2025")
+
+    #call view_tasks() so that we can view tasks
+    tasks=todo.view_tasks()
+
+    #assertions to test the function (without a human observer)
+    assert len(tasks)==3, "expected 3 tasks, found" + str(len(tasks))
+
+    titles=[task["title"] for task in tasks]
+    assert "Finish homework" in titles
+    assert "Go to the store" in titles
+    assert "Make a Powerpoint presentation" in titles
+    print("test_view_tasks passed :D")
+
+  def update_task(self, task_id, title=None, description=None, priority=None, deadline=None):
     #updates parameters of the given task
-    #only parameters made (not None) will be updated
-    pass
+    #only parameters made NOT None will be updated
+    for task in self.tasks:
+      if task["id"]==task_id:
+        #update field parameters only if new values were provided
+        if title is not None:
+          task["title"] = title
+        if description is not None:
+          task["description"] = description
+        if priority is not None:
+          task["priority"] = priority
+        if deadline is not None:
+          task["due_date"] = deadline
+          
+      print(f"Task {task_id} has been successfuly updated! :V")
+      return task #returns the updated task to test if it was properly updated
+    
+    #in case no task is found
+    print("No task found with id " + str(task_id) + " :\\")
+    return None
     
   def clear_completed(self):
-    #removes completed tasks
-    pass
-    
+    #removes tasks marked as completed
+    new_list = []
+    for task in self.tasks:
+      if not task["completed"]:
+        new_list.append(task)
+    removed = len(self.tasks) - len(new_list)
+    self.tasks = new_list
+    print(f"{removed} completed task(s) removed.")
+
     
     
