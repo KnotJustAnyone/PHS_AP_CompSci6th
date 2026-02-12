@@ -1,0 +1,38 @@
+import random
+
+# Create a standard 52-card deck
+def create_deck():
+    suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    return [(rank, suit) for suit in suits for rank in ranks]
+
+# Deal one card from the deck
+def deal_card(deck):
+    return deck.pop()
+
+# Display cards nicely
+def format_card(card):
+    rank, suit = card
+    return f"{rank} of {suit}"
+
+# ----- Game Setup -----
+deck = create_deck()
+random.shuffle(deck)
+
+player_hand = []
+dealer_hand = []
+
+# Initial deal (2 cards each)
+player_hand.append(deal_card(deck))
+dealer_hand.append(deal_card(deck))
+player_hand.append(deal_card(deck))
+dealer_hand.append(deal_card(deck))
+
+# ----- Display What the Player Sees -----
+print("Your hand:")
+for card in player_hand:
+    print(f"  {format_card(card)}")
+
+print("\nDealer's hand:")
+print(f"  {format_card(dealer_hand[0])}")
+print("  [Hidden card]")
