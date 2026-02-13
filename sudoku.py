@@ -6,7 +6,7 @@ class sudoku_board:
         print("What difficulty do you want to play at? (easy, medium, or hard)")
         sudoku_boards={"easy":sb.easy,"medium":sb.medium,"hard":sb.hard}
         difficulty=input()
-        self.chosenboard=sudokuboards[difficulty][random.randrange(len(sudokuboards[difficulty]))]
+        self.chosenboard=sudoku_boards[difficulty][random.randrange(len(sudoku_boards[difficulty]))]
         self.gameover=False
     def sudokuprint(self):
         for n in range(9):
@@ -30,30 +30,30 @@ class sudoku_board:
         
     def check(self, x, y):
     # Convert 1–9 positions to 0–8 indices to be used more easily in code
-    try:
-        row = y - 1
-        col = x - 1
+        try:
+            row = y - 1
+            col = x - 1
 
-        # Range check
-        if row not in range(9) or col not in range(9):
-            print("Error: list index out of range")
-            return False
+            # Range check
+            if row not in range(9) or col not in range(9):
+                print("Error: list index out of range")
+                return False
 
-        # Retrieve values
-        current_value = self.board[row][col]
-        correct_value = self.fullboard[row][col]
+            # Retrieve values
+            current_value = self.board[row][col]
+            correct_value = self.fullboard[row][col]
 
-        # Ensure both are integers
-        if not isinstance(current_value, int) or not isinstance(correct_value, int):
-            print("Error: non-integer value detected")
-            return False
+            # Ensure both are integers
+            if not isinstance(current_value, int) or not isinstance(correct_value, int):
+                print("Error: non-integer value detected")
+                return False
 
-        # Compare values
-        return current_value == correct_value
+            # Compare values
+            return current_value == correct_value
         
-    except Exception as e:
-        print(f"Error: {e}")
-        return False
+        except Exception as e:
+            print(f"Error: {e}")
+            return False
 
     def congrats(self):
         j=0
