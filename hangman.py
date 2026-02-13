@@ -196,10 +196,3 @@ def test_guess_letter_prints_type():
 
     output = captured.getvalue()
     assert "class 'str'" in output
-
-
-# --- RUN ALL TESTS ---
-if __name__ == "__main__":
-    run_test("Correct guess returns True", test_guess_letter_correct)
-    run_test("Incorrect guess returns False", test_guess_letter_incorrect)
-    run_test("Prints type of secret_word", test_guess_letter_prints_type)
