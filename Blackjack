@@ -15,6 +15,28 @@ def format_card(card):
     rank, suit = card
     return f"{rank} of {suit}"
 
+# Calculate hand value
+def calculate_hand_value(hand):
+    value = 0
+    aces = 0
+    
+    for card in hand:
+        rank, suit = card
+        if rank == "A":
+            aces += 1
+            value += 11
+        elif rank in ["J", "Q", "K"]:
+            value += 10
+        else:
+            value += int(rank)
+    
+    # Adjust for aces if hand is over 21
+    while value > 21 and aces > 0:
+        value -= 10
+        aces -= 1
+    
+    return value
+
 # ----- Game Setup -----
 deck = create_deck()
 random.shuffle(deck)
@@ -32,7 +54,42 @@ dealer_hand.append(deal_card(deck))
 print("Your hand:")
 for card in player_hand:
     print(f"  {format_card(card)}")
+print(f"Hand value: {calculate_hand_value(player_hand)}")
 
 print("\nDealer's hand:")
 print(f"  {format_card(dealer_hand[0])}")
 print("  [Hidden card]")
+
+# ----- Player's Turn (Hit or Stay) -----
+while True:
+    choice = input("\nDo you want to (h)it or (s)tay? ").lower().strip()
+    
+    if choice == "h":
+        new_card = deal_card(deck)
+        player_hand.append(new_card)
+        print(f"\nYou drew: {format_card(new_card)}")
+        
+        player_value = calculate_hand_value(player_hand)
+        print("Your hand:")
+        for card in player_hand:
+            print(f"  {format_card(card)}")
+        print(f"Hand value: {player_value}")
+        
+        if player_value > 21:
+            print("\nBust! You went over 21. You lose!")
+            break
+    
+    elif choice == "s":
+        print("\nYou stay.")
+        break
+    
+    else:
+        print("Invalid input. Please enter 'h' for hit or 's' for stay.")
+
+# ----- Reveal Dealer's Hand -----
+if calculate_hand_value(player_hand) <= 21:
+    print("\nDealer's hand:")
+    for card in dealer_hand:
+        print(f"  {format_card(card)}")
+    dealer_value = calculate_hand_value(dealer_hand)
+    print(f"Dealer's hand value: {dealer_value}")
