@@ -29,7 +29,7 @@ class Hangman:
         self.remaining_attempts = self.max_attempts
 
     def guess_letter(self):
-        ""Asks for input, processes a guess, and updates the game."""
+        """Asks for input, processes a guess, and updates the game."""
         letter = input("Guess a letter: ").lower()
         if letter in self.secret_word:
             print("Correct")
@@ -395,13 +395,6 @@ def get_display_word(self):
     return " ".join(self.display_word)
 
 game = Hangman(["word"])
-
-'''
-def test_choose_word_raises_error_on_empty_list():
-    """Test that choose_word raises a ValueError when word_list is empty."""
-    game = Hangman([])
-    with pytest.raises(ValueError):
-        game.choose_word()
         
 # --- helper to mock input() ---
 class MockInput:
