@@ -12,6 +12,17 @@ class matrix:
                 mat2[i][j]=self.mat[j][i]
         self.mat = mat2
         self.isTrans = True
+    '''
+    Aiden van Houten developed function
+    Takes in a matrix
+        An array initialized in the matrix class
+    Takes in a coordinate 
+        Two integers
+    Finds the minor matrix of the matrix at that coordinate
+        Removes the row and column of the element at that coordinate
+    Returns the determinant of that minor matrix using the matrix.det() function
+        An integer
+    '''
     def minor(self,x,y):
         if len(self.mat[0])==len(self.mat):
             newMat = []
@@ -26,6 +37,15 @@ class matrix:
             pass
         matrix1 = matrix(newMat)
         return matrix1.det()
+    '''
+    Aiden van Houten developed function
+    Takes in a matrix
+        An array initialized in the matrix class
+    Performs the determinant algorithm on matrix
+        Recurses with the minor function
+    Returns the determinant
+        Again an integer
+    '''
     def det(self):
         if len(self.mat) == 2:
                 return self.mat[1][1]*self.mat[0][0]-self.mat[1][0]*self.mat[0][1]
