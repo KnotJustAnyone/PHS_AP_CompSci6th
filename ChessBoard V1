@@ -1,13 +1,13 @@
+// List: board=[]
+// A 2D array (8x8) that stores the current state of the chess board.
+// Each element contains either null or a string representing a piece ("wP", "bK", "wQ").
 let tileSize, board = [], currentTurn = 'w', selectedSquare = { x: -1, y: -1 }, movingPiece = null;
 let legalMoves = [], legalCaptures = {}, pieceImages = {};
 let checkData = { w: [], b: [] }; 
+let gameOver = false, statusText = "";
 let hasMoved = { wK: false, bK: false, wR0: false, wR7: false, bR0: false, bR7: false };
-
-
-const pieceNames = {
-  'wP': 'White Pawn', 'wR': 'White Rook', 'wN': 'White Knight', 'wB': 'White Bishop', 'wQ': 'White Queen', 'wK': 'White King',
-  'bP': 'Black Pawn', 'bR': 'Black Rook', 'bN': 'Black Knight', 'bB': 'Black Bishop', 'bQ': 'Black Queen', 'bK': 'Black King'
-};
+let promotionState = { active: false, x: -1, y: -1, color: '' };
+let enPassantTarget = null; 
 
 function preload() {
   const base = "https://raw.githubusercontent.com/lichess-org/lila/ac65212b7b0c0918190ab1c768391fe3d8520296/public/piece/chess7/"
@@ -25,8 +25,8 @@ function setup() {
   for (let x = 0; x < 8; x++) board[x] = new Array(8).fill(null);
   const layout = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
   for (let i = 0; i < 8; i++) {
-    board[i][0] = 'b' + layout[i]; board[i][1] = 'bP';
-    board[i][6] = 'wP'; board[i][7] = 'w' + layout[i];
+    board[i][1] = 'bP'; board[i][6] = 'wP';
+    board[i][0] = 'b' + layout[i]; board[i][7] = 'w' + layout[i];
   }
 }
 
@@ -47,146 +47,197 @@ function draw() {
   let wK = findKing('wK'), bK = findKing('bK');
   checkData.w.forEach(p => drawAssaultRifle(p.x, p.y, wK.x, wK.y));
   checkData.b.forEach(p => drawAssaultRifle(p.x, p.y, bK.x, bK.y));
-  for (let x = 0; x < 8; x++) {
-    for (let y = 0; y < 8; y++) {
-      let p = board[x][y];
-      if (p && p.endsWith('K') && p.startsWith(currentTurn)) drawKingBubble(x, y);
-    }
-  }
+  if (gameOver) drawGameOver();
+  if (promotionState.active) drawPromotionMenu();
 }
 
-function drawAssaultRifle(px, py, kx, ky) {
-  push();
-  let sX = px * tileSize + tileSize/2, sY = py * tileSize + tileSize/2;
-  let tX = kx * tileSize + tileSize/2, tY = ky * tileSize + tileSize/2;
-  translate(sX, sY);
-  rotate(atan2(tY - sY, tX - sX));
-  if (tX < sX) scale(1, -1);
-  fill(40); stroke(0); strokeWeight(1);
-  rect(0, -2, 45, 4); rect(-15, -4, 20, 8); 
-  push(); translate(0, 2); rotate(0.2); rect(0, 0, 6, 12); pop();
-  rect(-12, 2, 5, 10); rect(-25, -4, 10, 6);
-  pop();
-}
-
-function drawKingBubble(x, y) {
-  let cx = x * tileSize + tileSize/2;
-  let isTopHalf = y < 4;
-  let cy = isTopHalf ? (y + 1) * tileSize + 20 : y * tileSize - 20; 
-  push();
-  fill(255); stroke(0); strokeWeight(1); rectMode(CENTER);
-  rect(cx, cy, 80, 24, 5);
-  if (isTopHalf) triangle(cx - 5, cy - 12, cx + 5, cy - 12, cx, cy - 25);
-  else triangle(cx - 5, cy + 12, cx + 5, cy + 12, cx, cy + 25);
-  fill(0); noStroke(); textAlign(CENTER, CENTER); textSize(11);
-  text("It's my turn!", cx, cy);
-  pop();
-}
-
-function findKing(code) {
-  for(let x=0; x<8; x++) for(let y=0; y<8; y++) if(board[x][y] === code) return {x, y};
-  return {x: 4, y: 0};
-}
-
-function mousePressed() {
-  let col = floor(mouseX / tileSize), row = floor(mouseY / tileSize);
-  if (col < 0 || col > 7 || row < 0 || row > 7) return;
-  let move = legalMoves.find(m => m.x === col && m.y === row);
-  if (movingPiece && move) {
-    let from = char(97 + selectedSquare.x) + (8 - selectedSquare.y);
-    let to = char(97 + col) + (8 - row);
-    console.log(pieceNames[movingPiece] + " moved from " + from + " to " + to);
-
-    if (movingPiece.endsWith('K')) {
-      if (Math.abs(col - selectedSquare.x) === 2) {
-        let r = movingPiece.startsWith('w') ? 7 : 0;
-        if (col === 6) { board[5][r] = board[7][r]; board[7][r] = null; }
-        else if (col === 2) { board[3][r] = board[0][r]; board[0][r] = null; }
-      }
-      hasMoved[movingPiece] = true;
-    }
-    board[col][row] = movingPiece; board[selectedSquare.x][selectedSquare.y] = null;
-    currentTurn = currentTurn === 'w' ? 'b' : 'w'; resetSelection(); updateCheckStatus();
-  } else if (board[col][row] && board[col][row].startsWith(currentTurn)) {
-    movingPiece = board[col][row]; selectedSquare = { x: col, y: row };
-    legalMoves = getStrictLegalMoves(col, row, movingPiece);
-  } else resetSelection();
-}
-
-function updateCheckStatus() {
-  checkData.w = getCheckingPieces('wK', board);
-  checkData.b = getCheckingPieces('bK', board);
-}
-
-function getCheckingPieces(kingCode, b) {
-  let kPos = findKing(kingCode), enemy = kingCode.startsWith('w') ? 'b' : 'w', checkers = [];
-  for(let x=0; x<8; x++) for(let y=0; y<8; y++) {
-    if(b[x][y] && b[x][y].startsWith(enemy)) {
-      if (getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === kPos.x && m.y === kPos.y)) checkers.push({x, y});
-    }
-  }
-  return checkers;
-}
-
-function getStrictLegalMoves(x, y, p) {
-  let moves = getPseudoMoves(x, y, p, board).filter(m => {
-    let old = board[m.x][m.y], res = true;
-    board[m.x][m.y] = p; board[x][y] = null;
-    if (getCheckingPieces(p.startsWith('w') ? 'wK' : 'bK', board).length > 0) res = false;
-    board[x][y] = p; board[m.x][m.y] = old;
-    return res;
-  });
-  if (p.endsWith('K') && !hasMoved[p] && getCheckingPieces(p, board).length === 0) {
-    let r = p.startsWith('w') ? 7 : 0;
-    if (board[7][r] && !board[5][r] && !board[6][r] && isSafe(5, r, p) && isSafe(6, r, p)) moves.push({x: 6, y: r});
-    if (board[0][r] && !board[1][r] && !board[2][r] && !board[3][r] && isSafe(3, r, p) && isSafe(2, r, p)) moves.push({x: 2, y: r});
-  }
-  return moves;
-}
-
-function isSafe(x, y, color) {
-  let kCode = color + 'K', old = board[x][y]; board[x][y] = kCode;
-  let safe = getCheckingPieces(kCode, board).length === 0;
-  board[x][y] = old; return safe;
-}
-
-function getPseudoMoves(x, y, piece, b, skipVisuals = false) {
+function getPseudoMoves(x, y, piece, b, ignoreCastling = false) {
   let moves = [], color = piece[0], type = piece[1];
   const add = (nx, ny) => {
     if (nx < 0 || nx > 7 || ny < 0 || ny > 7) return false;
     if (!b[nx][ny]) { moves.push({x: nx, y: ny}); return true; }
-    if (b[nx][ny][0] !== color) { moves.push({x: nx, y: ny}); if(!skipVisuals) legalCaptures[`${nx},${ny}`] = true; }
+    if (b[nx][ny][0] !== color) { moves.push({x: nx, y: ny}); }
     return false;
   };
 
   if (type === 'P') {
     let d = color === 'w' ? -1 : 1;
-    // Standard Forward
-    if (y + d >= 0 && y + d <= 7 && !b[x][y + d]) {
-      moves.push({x: x, y: y + d});
-      if ((y === (color === 'w' ? 6 : 1)) && !b[x][y + 2 * d]) moves.push({x: x, y: y + 2 * d});
+    if (y+d >= 0 && y+d <= 7 && !b[x][y+d]) {
+      moves.push({x: x, y: y+d});
+      if (y === (color === 'w' ? 6 : 1) && !b[x][y+2*d] && !b[x][y+d]) moves.push({x: x, y: y+2*d});
     }
-    // DIAGONAL CAPTURES
     [[-1, d], [1, d]].forEach(m => {
       let nx = x + m[0], ny = y + m[1];
       if (nx >= 0 && nx <= 7 && ny >= 0 && ny <= 7) {
-        if (b[nx][ny] && b[nx][ny][0] !== color) {
-          moves.push({x: nx, y: ny});
-          if (!skipVisuals) legalCaptures[`${nx},${ny}`] = true;
+        if (b[nx][ny] && b[nx][ny][0] !== color) moves.push({x: nx, y: ny});
+        // En Passant Logic
+        if (enPassantTarget && nx === enPassantTarget.x && ny === enPassantTarget.y) {
+          moves.push({x: nx, y: ny, isEnPassant: true});
         }
       }
     });
   } else if (type === 'N') {
-    [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]].forEach(m => add(x + m[0], y + m[1]));
+    [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(m => add(x+m[0], y+m[1]));
   } else if (['R', 'B', 'Q'].includes(type)) {
-    let dirs = [];
-    if (type !== 'B') dirs.push([0, 1], [0, -1], [1, 0], [-1, 0]);
-    if (type !== 'R') dirs.push([1, 1], [1, -1], [-1, 1], [-1, -1]);
-    dirs.forEach(d => { for (let i = 1; i < 8; i++) if (!add(x + d[0] * i, y + d[1] * i)) break; });
+    let dirs = (type === 'R') ? [[0,1],[0,-1],[1,0],[-1,0]] : (type === 'B') ? [[1,1],[1,-1],[-1,1],[-1,-1]] : [[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+    dirs.forEach(d => { for (let i = 1; i < 8; i++) if (!add(x + d[0]*i, y + d[1]*i)) break; });
   } else if (type === 'K') {
     for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) if (dx !== 0 || dy !== 0) add(x + dx, y + dy);
+    if (!ignoreCastling) {
+      let r = color === 'w' ? 7 : 0;
+      if (!hasMoved[color+'K'] && getCheckingPieces(color+'K', b).length === 0) {
+        if (!hasMoved[color+'R7'] && !b[5][r] && !b[6][r] && isSquareSafe(5, r, color, b)) moves.push({x: 6, y: r});
+        if (!hasMoved[color+'R0'] && !b[1][r] && !b[2][r] && !b[3][r] && isSquareSafe(3, r, color, b)) moves.push({x: 2, y: r});
+      }
+    }
   }
   return moves;
 }
 
-function resetSelection() { movingPiece = null; selectedSquare = { x: -1, y: -1 }; legalMoves = []; legalCaptures = {}; }
+function isSquareSafe(tx, ty, color, b) {
+  let enemy = color === 'w' ? 'b' : 'w';
+  for (let x = 0; x < 8; x++) for (let y = 0; y < 8; y++) {
+    if (b[x][y] && b[x][y][0] === enemy) {
+      if (getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === tx && m.y === ty)) return false;
+    }
+  }
+  return true;
+}
+
+// PROCEDURE: getStrictLegalMoves(fx,fy,p){}
+// Name:Nathan See
+//
+// Description:
+// This function calculates all STRICT legal moves for a selected chess piece.
+// It removes any moves that would place or leave that player's king in check.
+// It also tracks which of those legal moves are captures.
+//
+// Parameters:
+// fx (number) - The starting x-coordinate (column 0–7) of the selected piece.
+// fy (number) - The starting y-coordinate (row 0–7) of the selected piece.
+// p (string) - The piece code ("wN", "bP") representing the piece being moved.
+//
+// Return:
+// Array of objects - Each object represents a legal move with:
+//   { x: number, y: number }
+// where x and y are the board coordinates of a legal destination square.
+function getStrictLegalMoves(fx, fy, p) {
+  let pMoves = getPseudoMoves(fx, fy, p, board);
+  legalCaptures = {};
+  return pMoves.filter(m => {
+    let old = board[m.x][m.y], res = true;
+    let epPawn = null, epPos = null;
+    if (m.isEnPassant) {
+      epPos = { x: m.x, y: (p[0] === 'w' ? m.y + 1 : m.y - 1) };
+      epPawn = board[epPos.x][epPos.y];
+      board[epPos.x][epPos.y] = null;
+    }
+    board[m.x][m.y] = p; board[fx][fy] = null;
+    if (getCheckingPieces(p[0] + 'K', board).length > 0) res = false;
+    board[fx][fy] = p; board[m.x][m.y] = old;
+    if (m.isEnPassant) board[epPos.x][epPos.y] = epPawn;
+    if (res && ((old && old[0] !== p[0]) || m.isEnPassant)) legalCaptures[`${m.x},${m.y}`] = true;
+    return res;
+  });
+}
+
+function executeMove(fx, fy, tx, ty) {
+  let p = board[fx][fy], move = legalMoves.find(m => m.x === tx && m.y === ty);
+  if (move.isEnPassant) board[tx][p[0] === 'w' ? ty + 1 : ty - 1] = null;
+  if (p[1] === 'K' && Math.abs(tx - fx) === 2) {
+    let rY = p[0] === 'w' ? 7 : 0;
+    if (tx === 6) { board[5][rY] = board[7][rY]; board[7][rY] = null; }
+    else { board[3][rY] = board[0][rY]; board[0][rY] = null; }
+  }
+  if (p[1] === 'K') hasMoved[p[0]+'K'] = true;
+  if (p[1] === 'R') hasMoved[p[0] + (fx === 0 ? 'R0' : 'R7')] = true;
+  
+  board[tx][ty] = p; board[fx][fy] = null;
+  enPassantTarget = (p[1] === 'P' && Math.abs(ty - fy) === 2) ? { x: tx, y: (fy + ty) / 2 } : null;
+  
+  if (p[1] === 'P' && (ty === 0 || ty === 7)) {
+    promotionState = { active: true, x: tx, y: ty, color: p[0] };
+    resetSelection();
+  } else finalizeTurn();
+}
+
+function finalizeTurn() { 
+  currentTurn = currentTurn === 'w' ? 'b' : 'w'; 
+  resetSelection(); updateCheckStatus(); checkGameEnd(); 
+}
+
+function updateCheckStatus() { 
+  checkData.w = getCheckingPieces('wK', board); 
+  checkData.b = getCheckingPieces('bK', board); 
+}
+
+function findKing(c) { 
+  for(let x=0; x<8; x++) for(let y=0; y<8; y++) if(board[x][y] === c) return {x, y}; 
+  return {x:-1, y:-1}; 
+}
+
+function resetSelection() { 
+  movingPiece = null; selectedSquare = { x: -1, y: -1 }; legalMoves = []; legalCaptures = {}; 
+}
+
+function getCheckingPieces(k, b) { 
+  let kP = findKing(k), enemy = k[0] === 'w' ? 'b' : 'w', c = []; 
+  if (kP.x === -1) return []; 
+  for(let x=0; x<8; x++) for(let y=0; y<8; y++) 
+    if(b[x][y] && b[x][y][0] === enemy && getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === kP.x && m.y === kP.y)) c.push({x, y}); 
+  return c; 
+}
+
+function checkGameEnd() { 
+  let h = false; 
+  for (let x = 0; x < 8; x++) for (let y = 0; y < 8; y++) 
+    if (board[x][y] && board[x][y][0] === currentTurn && getStrictLegalMoves(x, y, board[x][y]).length > 0) h = true; 
+  if (!h) { 
+    gameOver = true; 
+    statusText = getCheckingPieces(currentTurn + 'K', board).length > 0 ? (currentTurn === 'w' ? "Black Wins!" : "White Wins!") : "Draw"; 
+  } 
+}
+
+function drawAssaultRifle(px, py, kx, ky) {
+  push(); translate(px * tileSize + tileSize/2, py * tileSize + tileSize/2);
+  rotate(atan2(ky - py, kx - px)); if (kx < px) scale(1, -1);
+  fill(40); stroke(0); rect(0, -2, 45, 4); rect(-15, -4, 20, 8); pop();
+}
+
+function drawPromotionMenu() {
+  fill(0, 150); rect(0, 0, width, height);
+  let pieces = ['Q', 'R', 'B', 'N'], cx = width/2 - tileSize*2, cy = height/2 - tileSize/2;
+  for (let i = 0; i < 4; i++) {
+    fill(255); rect(cx + i * tileSize, cy, tileSize, tileSize);
+    image(pieceImages[promotionState.color + pieces[i]], cx + i * tileSize, cy, tileSize, tileSize);
+  }
+}
+
+function mousePressed() {
+  if (gameOver) return;
+  if (promotionState.active) {
+    let cx = width/2 - tileSize*2, cy = height/2 - tileSize/2;
+    for (let i = 0; i < 4; i++) {
+      let px = cx + i * tileSize;
+      if (mouseX > px && mouseX < px + tileSize && mouseY > cy && mouseY < cy + tileSize) {
+        board[promotionState.x][promotionState.y] = promotionState.color + ['Q', 'R', 'B', 'N'][i];
+        promotionState.active = false; finalizeTurn();
+      }
+    }
+    return;
+  }
+  let col = floor(mouseX / tileSize), row = floor(mouseY / tileSize);
+  if (col < 0 || col > 7 || row < 0 || row > 7) return;
+  let move = legalMoves.find(m => m.x === col && m.y === row);
+  if (movingPiece && move) executeMove(selectedSquare.x, selectedSquare.y, col, row);
+  else if (board[col][row] && board[col][row][0] === currentTurn) {
+    movingPiece = board[col][row]; selectedSquare = { x: col, y: row };
+    legalMoves = getStrictLegalMoves(col, row, movingPiece);
+  } else resetSelection();
+}
+
+function drawGameOver() { fill(0, 150); rect(0, 0, width, height); fill(255); textAlign(CENTER); text(statusText, width/2, height/2); }
+
+function getCheckingPieces(k, b) { let kP = findKing(k), enemy = k[0] === 'w' ? 'b' : 'w', c = []; if (kP.x === -1) return []; for(let x=0; x<8; x++) for(let y=0; y<8; y++) if(b[x][y] && b[x][y][0] === enemy && getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === kP.x && m.y === kP.y)) c.push({x, y}); return c; }
+function checkGameEnd() { let h = false; for (let x = 0; x < 8; x++) for (let y = 0; y < 8; y++) if (board[x][y] && board[x][y][0] === currentTurn && getStrictLegalMoves(x, y, board[x][y]).length > 0) h = true; if (!h) { gameOver = true; statusText = getCheckingPieces(currentTurn + 'K', board).length > 0 ? (currentTurn === 'w' ? "Black Wins!" : "White Wins!") : "Draw"; } }
+
