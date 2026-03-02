@@ -1,8 +1,8 @@
 let tileSize, board = [], currentTurn = 'w', selectedSquare = { x: -1, y: -1 }, movingPiece = null;
 let legalMoves = [], legalCaptures = {}, pieceImages = {};
 let checkData = { w: [], b: [] }; 
+let gameOver = false, statusText = "";
 let hasMoved = { wK: false, bK: false, wR0: false, wR7: false, bR0: false, bR7: false };
-
 
 const pieceNames = {
   'wP': 'White Pawn', 'wR': 'White Rook', 'wN': 'White Knight', 'wB': 'White Bishop', 'wQ': 'White Queen', 'wK': 'White King',
@@ -44,88 +44,79 @@ function draw() {
       }
     }
   }
+
   let wK = findKing('wK'), bK = findKing('bK');
   checkData.w.forEach(p => drawAssaultRifle(p.x, p.y, wK.x, wK.y));
   checkData.b.forEach(p => drawAssaultRifle(p.x, p.y, bK.x, bK.y));
-  for (let x = 0; x < 8; x++) {
-    for (let y = 0; y < 8; y++) {
-      let p = board[x][y];
-      if (p && p.endsWith('K') && p.startsWith(currentTurn)) drawKingBubble(x, y);
+
+  if (!gameOver) {
+    for (let x = 0; x < 8; x++) {
+      for (let y = 0; y < 8; y++) {
+        let p = board[x][y];
+        if (p && p.endsWith('K') && p.startsWith(currentTurn)) drawKingBubble(x, y);
+      }
     }
-  }
+  } else drawGameOver();
 }
 
-function drawAssaultRifle(px, py, kx, ky) {
-  push();
-  let sX = px * tileSize + tileSize/2, sY = py * tileSize + tileSize/2;
-  let tX = kx * tileSize + tileSize/2, tY = ky * tileSize + tileSize/2;
-  translate(sX, sY);
-  rotate(atan2(tY - sY, tX - sX));
-  if (tX < sX) scale(1, -1);
-  fill(40); stroke(0); strokeWeight(1);
-  rect(0, -2, 45, 4); rect(-15, -4, 20, 8); 
-  push(); translate(0, 2); rotate(0.2); rect(0, 0, 6, 12); pop();
-  rect(-12, 2, 5, 10); rect(-25, -4, 10, 6);
-  pop();
-}
-
-function drawKingBubble(x, y) {
-  let cx = x * tileSize + tileSize/2;
-  let isTopHalf = y < 4;
-  let cy = isTopHalf ? (y + 1) * tileSize + 20 : y * tileSize - 20; 
-  push();
-  fill(255); stroke(0); strokeWeight(1); rectMode(CENTER);
-  rect(cx, cy, 80, 24, 5);
-  if (isTopHalf) triangle(cx - 5, cy - 12, cx + 5, cy - 12, cx, cy - 25);
-  else triangle(cx - 5, cy + 12, cx + 5, cy + 12, cx, cy + 25);
-  fill(0); noStroke(); textAlign(CENTER, CENTER); textSize(11);
-  text("It's my turn!", cx, cy);
-  pop();
-}
-
-function findKing(code) {
-  for(let x=0; x<8; x++) for(let y=0; y<8; y++) if(board[x][y] === code) return {x, y};
-  return {x: 4, y: 0};
+function drawGameOver() {
+  fill(0, 150); rect(0, 0, width, height);
+  fill(255); textAlign(CENTER, CENTER); textSize(40); text(statusText, width/2, height/2);
+  textSize(20); text("Refresh to restart", width/2, height/2 + 50);
 }
 
 function mousePressed() {
+  if (gameOver) return;
   let col = floor(mouseX / tileSize), row = floor(mouseY / tileSize);
   if (col < 0 || col > 7 || row < 0 || row > 7) return;
+  
   let move = legalMoves.find(m => m.x === col && m.y === row);
   if (movingPiece && move) {
-    let from = char(97 + selectedSquare.x) + (8 - selectedSquare.y);
-    let to = char(97 + col) + (8 - row);
-    console.log(pieceNames[movingPiece] + " moved from " + from + " to " + to);
-
-    if (movingPiece.endsWith('K')) {
-      if (Math.abs(col - selectedSquare.x) === 2) {
-        let r = movingPiece.startsWith('w') ? 7 : 0;
-        if (col === 6) { board[5][r] = board[7][r]; board[7][r] = null; }
-        else if (col === 2) { board[3][r] = board[0][r]; board[0][r] = null; }
-      }
-      hasMoved[movingPiece] = true;
-    }
-    board[col][row] = movingPiece; board[selectedSquare.x][selectedSquare.y] = null;
-    currentTurn = currentTurn === 'w' ? 'b' : 'w'; resetSelection(); updateCheckStatus();
+    executeMove(selectedSquare.x, selectedSquare.y, col, row);
   } else if (board[col][row] && board[col][row].startsWith(currentTurn)) {
     movingPiece = board[col][row]; selectedSquare = { x: col, y: row };
     legalMoves = getStrictLegalMoves(col, row, movingPiece);
   } else resetSelection();
 }
 
-function updateCheckStatus() {
-  checkData.w = getCheckingPieces('wK', board);
-  checkData.b = getCheckingPieces('bK', board);
+function executeMove(fx, fy, tx, ty) {
+  let from = char(97 + fx) + (8 - fy), to = char(97 + tx) + (8 - ty);
+  console.log(`${pieceNames[movingPiece]} moved from ${from} to ${to}`);
+
+  if (movingPiece.endsWith('K') && Math.abs(tx - fx) === 2) {
+    let r = movingPiece.startsWith('w') ? 7 : 0;
+    if (tx === 6) { board[5][r] = board[7][r]; board[7][r] = null; }
+    else if (tx === 2) { board[3][r] = board[0][r]; board[0][r] = null; }
+  }
+
+  if (movingPiece.endsWith('K')) hasMoved[movingPiece.startsWith('w') ? 'wK' : 'bK'] = true;
+  if (movingPiece.endsWith('R')) {
+    let side = movingPiece.startsWith('w') ? 'w' : 'b';
+    if (fx === 0) hasMoved[side + 'R0'] = true;
+    if (fx === 7) hasMoved[side + 'R7'] = true;
+  }
+
+  board[tx][ty] = movingPiece; board[fx][fy] = null;
+  if (movingPiece.endsWith('P') && (ty === 0 || ty === 7)) board[tx][ty] = movingPiece[0] + 'Q';
+
+  currentTurn = currentTurn === 'w' ? 'b' : 'w';
+  resetSelection(); updateCheckStatus(); checkGameEnd();
 }
 
-function getCheckingPieces(kingCode, b) {
-  let kPos = findKing(kingCode), enemy = kingCode.startsWith('w') ? 'b' : 'w', checkers = [];
-  for(let x=0; x<8; x++) for(let y=0; y<8; y++) {
-    if(b[x][y] && b[x][y].startsWith(enemy)) {
-      if (getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === kPos.x && m.y === kPos.y)) checkers.push({x, y});
+function checkGameEnd() {
+  let hasMoves = false;
+  for (let x = 0; x < 8; x++) {
+    for (let y = 0; y < 8; y++) {
+      if (board[x][y] && board[x][y].startsWith(currentTurn)) {
+        if (getStrictLegalMoves(x, y, board[x][y]).length > 0) hasMoves = true;
+      }
     }
   }
-  return checkers;
+  if (!hasMoves) {
+    gameOver = true;
+    let inCheck = getCheckingPieces(currentTurn + 'K', board).length > 0;
+    statusText = inCheck ? (currentTurn === 'w' ? "Black Wins!" : "White Wins!") : "Draw / Stalemate";
+  }
 }
 
 function getStrictLegalMoves(x, y, p) {
@@ -136,10 +127,11 @@ function getStrictLegalMoves(x, y, p) {
     board[x][y] = p; board[m.x][m.y] = old;
     return res;
   });
-  if (p.endsWith('K') && !hasMoved[p] && getCheckingPieces(p, board).length === 0) {
-    let r = p.startsWith('w') ? 7 : 0;
-    if (board[7][r] && !board[5][r] && !board[6][r] && isSafe(5, r, p) && isSafe(6, r, p)) moves.push({x: 6, y: r});
-    if (board[0][r] && !board[1][r] && !board[2][r] && !board[3][r] && isSafe(3, r, p) && isSafe(2, r, p)) moves.push({x: 2, y: r});
+  
+  if (p.endsWith('K') && !hasMoved[p.startsWith('w') ? 'wK' : 'bK'] && getCheckingPieces(p, board).length === 0) {
+    let r = p.startsWith('w') ? 7 : 0, s = p.startsWith('w') ? 'w' : 'b';
+    if (board[7][r] === s+'R' && !hasMoved[s+'R7'] && !board[5][r] && !board[6][r] && isSafe(5, r, p[0]) && isSafe(6, r, p[0])) moves.push({x: 6, y: r});
+    if (board[0][r] === s+'R' && !hasMoved[s+'R0'] && !board[1][r] && !board[2][r] && !board[3][r] && isSafe(3, r, p[0]) && isSafe(2, r, p[0])) moves.push({x: 2, y: r});
   }
   return moves;
 }
@@ -151,6 +143,7 @@ function isSafe(x, y, color) {
 }
 
 function getPseudoMoves(x, y, piece, b, skipVisuals = false) {
+  if (!skipVisuals) legalCaptures = {}; 
   let moves = [], color = piece[0], type = piece[1];
   const add = (nx, ny) => {
     if (nx < 0 || nx > 7 || ny < 0 || ny > 7) return false;
@@ -161,19 +154,14 @@ function getPseudoMoves(x, y, piece, b, skipVisuals = false) {
 
   if (type === 'P') {
     let d = color === 'w' ? -1 : 1;
-    // Standard Forward
     if (y + d >= 0 && y + d <= 7 && !b[x][y + d]) {
       moves.push({x: x, y: y + d});
-      if ((y === (color === 'w' ? 6 : 1)) && !b[x][y + 2 * d]) moves.push({x: x, y: y + 2 * d});
+      if ((y === (color === 'w' ? 6 : 1)) && !b[x][y + 2 * d] && !b[x][y + d]) moves.push({x: x, y: y + 2 * d});
     }
-    // DIAGONAL CAPTURES
     [[-1, d], [1, d]].forEach(m => {
       let nx = x + m[0], ny = y + m[1];
-      if (nx >= 0 && nx <= 7 && ny >= 0 && ny <= 7) {
-        if (b[nx][ny] && b[nx][ny][0] !== color) {
-          moves.push({x: nx, y: ny});
-          if (!skipVisuals) legalCaptures[`${nx},${ny}`] = true;
-        }
+      if (nx >= 0 && nx <= 7 && ny >= 0 && ny <= 7 && b[nx][ny] && b[nx][ny][0] !== color) {
+        moves.push({x: nx, y: ny}); if (!skipVisuals) legalCaptures[`${nx},${ny}`] = true;
       }
     });
   } else if (type === 'N') {
@@ -189,4 +177,50 @@ function getPseudoMoves(x, y, piece, b, skipVisuals = false) {
   return moves;
 }
 
+function updateCheckStatus() {
+  checkData.w = getCheckingPieces('wK', board);
+  checkData.b = getCheckingPieces('bK', board);
+}
+
+function getCheckingPieces(kingCode, b) {
+  let kPos = findKing(kingCode), enemy = kingCode[0] === 'w' ? 'b' : 'w', checkers = [];
+  if (kPos.x === -1) return [];
+  for(let x=0; x<8; x++) for(let y=0; y<8; y++) {
+    if(b[x][y] && b[x][y][0] === enemy) {
+      if (getPseudoMoves(x, y, b[x][y], b, true).some(m => m.x === kPos.x && m.y === kPos.y)) checkers.push({x, y});
+    }
+  }
+  return checkers;
+}
+
+function findKing(code) {
+  for(let x=0; x<8; x++) for(let y=0; y<8; y++) if(board[x][y] === code) return {x, y};
+  return {x: -1, y: -1};
+}
+
 function resetSelection() { movingPiece = null; selectedSquare = { x: -1, y: -1 }; legalMoves = []; legalCaptures = {}; }
+
+function drawAssaultRifle(px, py, kx, ky) {
+  push();
+  let sX = px * tileSize + tileSize/2, sY = py * tileSize + tileSize/2;
+  let tX = kx * tileSize + tileSize/2, tY = ky * tileSize + tileSize/2;
+  translate(sX, sY); rotate(atan2(tY - sY, tX - sX));
+  if (tX < sX) scale(1, -1);
+  fill(40); stroke(0); strokeWeight(1);
+  rect(0, -2, 45, 4); rect(-15, -4, 20, 8); 
+  push(); translate(0, 2); rotate(0.2); rect(0, 0, 6, 12); pop();
+  rect(-12, 2, 5, 10); rect(-25, -4, 10, 6);
+  pop();
+}
+
+function drawKingBubble(x, y) {
+  let cx = x * tileSize + tileSize/2;
+  let isTopHalf = y < 4, cy = isTopHalf ? (y + 1) * tileSize + 20 : y * tileSize - 20; 
+  push();
+  fill(255); stroke(0); strokeWeight(1); rectMode(CENTER);
+  rect(cx, cy, 80, 24, 5);
+  if (isTopHalf) triangle(cx - 5, cy - 12, cx + 5, cy - 12, cx, cy - 25);
+  else triangle(cx - 5, cy + 12, cx + 5, cy + 12, cx, cy + 25);
+  fill(0); noStroke(); textAlign(CENTER, CENTER); textSize(11); text("It's my turn!", cx, cy);
+  pop();
+}
