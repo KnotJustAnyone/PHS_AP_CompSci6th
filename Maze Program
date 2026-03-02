@@ -1,7 +1,8 @@
-# Maze Game - Week 2
-# Player movement and wall detection
+import random
 
-maze = [
+# ----------- MAZES (All 10x10 and aligned) -----------
+
+maze1 = [
     list("##########"),
     list("#P       #"),
     list("# ###### #"),
@@ -10,6 +11,32 @@ maze = [
     list("#      E #"),
     list("##########")
 ]
+
+maze2 = [
+    list("##########"),
+    list("#P   #   #"),
+    list("# ## # # #"),
+    list("#    # # #"),
+    list("#### # # #"),
+    list("#      E #"),
+    list("##########")
+]
+
+maze3 = [
+    list("##########"),
+    list("#P     # #"),
+    list("### ### # #"),
+    list("#     #   #"),
+    list("# ### ### #"),
+    list("#     E   #"),
+    list("##########")
+]
+
+mazes = [maze1, maze2, maze3]
+
+maze = random.choice(mazes)
+
+# ----------- FUNCTIONS -----------
 
 def print_maze(maze):
     for row in maze:
@@ -24,11 +51,14 @@ for r in range(len(maze)):
             player_row = r
             player_col = c
 
+# ----------- GAME LOOP -----------
+
 while True:
     print_maze(maze)
     move = input("Move (W/A/S/D, Q to quit): ").lower()
 
     if move == "q":
+        print("Game exited.")
         break
 
     new_row, new_col = player_row, player_col
@@ -41,7 +71,11 @@ while True:
         new_col -= 1
     elif move == "d":
         new_col += 1
+    else:
+        print("Invalid input.")
+        continue
 
+    # Check wall collision
     if maze[new_row][new_col] == "#":
         print("You hit a wall!")
     else:
@@ -49,6 +83,7 @@ while True:
         player_row, player_col = new_row, new_col
 
         if maze[player_row][player_col] == "E":
+            print_maze(maze)
             print("You reached the exit! You win!")
             break
 
