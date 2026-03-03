@@ -107,7 +107,7 @@ while True:
     
     #Ask player if they want to play again 
     answer = input("Play again? (y/n): ")
-    if answer.lower() != "y":
+    if answer != "y":
         print("Thanks for playing! :>")
         break
 
