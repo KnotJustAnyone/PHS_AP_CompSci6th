@@ -26,6 +26,34 @@ def play_piece(board, column, current_player):
             board[row][column] = current_player
             return
     #plays the piece by dropping it the selected column
+def valid_move(board,column):
+    return board[0][column]=="."
+    #checks if the selected column is full
+
+def check_winner(board, current_player):
+    #Horizontal 
+    for r in range(ROWS):
+        for c in range(COLUMNS-3):
+            if board[r][c]==current_player and board[r][c+1]==current_player and board[r][c+2]==current_player and board[r][c+3]==current_player:
+                return True
+    #Vertical
+    for r in range(ROWS-3):
+        for c in range(COLUMNS):
+            if board[r][c]==current_player and board[r+1][c]==current_player and board[r+2][c]==current_player and board[r+3][c]==current_player:
+                return True
+    #Diagonal down-right
+    for r in range(ROWS-3):
+        for c in range(COLUMNS-3):
+            if board[r][c]==current_player and board[r+1][c+1]==current_player and board[r+2][c+2]==current_player and board[r+3][c+3]==current_player:
+                return True
+    #Diagonal up-right
+    for r in range(3,ROWS):
+        for c in range(COLUMNS-3):
+            if board[r][c]==current_player and board[r-1][c+1]==current_player and board[r-2][c+2]==current_player and board[r-3][c+3]==current_player:
+                return True
+            
+    return False
+
 
 def valid_move(board,column):
     return board[0][column]=="."
