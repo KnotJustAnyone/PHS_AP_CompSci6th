@@ -1,6 +1,9 @@
 import random
 
-# Deck Setup 
+
+# Deck Setup
+
+
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
     action_cards = ["Skip", "Reverse", "Draw Two"]
@@ -15,7 +18,10 @@ def create_uno_deck():
 
     deck.extend(["Wild"] * 4)
     deck.extend(["Wild Draw Four"] * 4)
+
+    random.shuffle(deck)
     return deck
+
 
 def deal_hands(deck, num_players, cards_per_player=7):
     hands = [[] for _ in range(num_players)]
@@ -24,16 +30,20 @@ def deal_hands(deck, num_players, cards_per_player=7):
             hands[player].append(deck.pop())
     return hands
 
-# Helper Functions 
+
+
+# Helper Functions
+
+
 def parse_card(card):
-    """Return color and value, ignoring declared color in parentheses."""
-    if "(" in card:  # e.g., Wild (Red)
+    if "(" in card:
         base, declared = card.split("(")
         return declared.strip(")"), base.strip()
     if card.startswith("Wild"):
         return "Wild", card
     color, value = card.split(" ", 1)
     return color, value
+
 
 def get_wild_color():
     colors = ["Red", "Yellow", "Green", "Blue"]
@@ -43,34 +53,53 @@ def get_wild_color():
             return color
         print("Invalid color. Try again.")
 
+
 def is_playable(card, top_card):
     card_color, card_value = parse_card(card)
     top_color, top_value = parse_card(top_card)
+
     return (
         card_color == "Wild"
         or card_color == top_color
         or card_value == top_value
     )
 
+
+def reshuffle_deck(deck, discard_pile):
+    if not deck:
+        print("Reshuffling discard pile...")
+        top = discard_pile.pop()
+        deck.extend(discard_pile)
+        random.shuffle(deck)
+        discard_pile.clear()
+        discard_pile.append(top)
+
+
 # Game Setup
+
+
 num_players = int(input("How many players? "))
-
 deck = create_uno_deck()
-random.shuffle(deck)
-
 hands = deal_hands(deck, num_players)
 
-# Initialize discard pile and handle first card if Wild
 top_card = deck.pop()
 if top_card.startswith("Wild"):
     chosen_color = get_wild_color()
     top_card = f"{top_card} ({chosen_color})"
 
 discard_pile = [top_card]
+
 current_player = 0
+direction = 1  # 1 = forward, -1 = backward
+
 
 # Main Game Loop
+
+
 while True:
+
+    reshuffle_deck(deck, discard_pile)
+
     print("\n----------------------------")
     print(f"Top card: {discard_pile[-1]}")
     print(f"Player {current_player + 1}'s turn")
@@ -78,28 +107,22 @@ while True:
     for i, card in enumerate(hands[current_player]):
         print(f"{i}: {card}")
 
-    # Determine playable cards
     playable_indices = [
         i for i, card in enumerate(hands[current_player])
         if is_playable(card, discard_pile[-1])
     ]
 
-    # Draw if no playable cards
     if not playable_indices:
         print("No playable cards — drawing one.")
         if deck:
             hands[current_player].append(deck.pop())
-        else:
-            print("Deck is empty, skipping draw.")
     else:
-        # Player chooses a card to play
         while True:
             try:
                 choice = int(input("Choose a card index to play: "))
                 if choice in playable_indices:
                     chosen_card = hands[current_player].pop(choice)
 
-                    # Handle Wild cards
                     if chosen_card.startswith("Wild"):
                         chosen_color = get_wild_color()
                         chosen_card = f"{chosen_card} ({chosen_color})"
@@ -107,15 +130,53 @@ while True:
                     discard_pile.append(chosen_card)
                     break
                 else:
-                    print("That card is not playable. Try again.")
+                    print("That card is not playable.")
             except ValueError:
-                print("Please enter a valid number.")
+                print("Enter a valid number.")
 
-    # Check for win
+    
+        # SPECIAL CARD EFFECTS
+    
+
+        color, value = parse_card(discard_pile[-1])
+
+        # Skip
+        if value == "Skip":
+            print("Next player skipped!")
+            current_player = (current_player + direction) % num_players
+
+        # Reverse
+        elif value == "Reverse":
+            print("Direction reversed!")
+            direction *= -1
+
+        # Draw Two
+        elif value == "Draw Two":
+            next_player = (current_player + direction) % num_players
+            print(f"Player {next_player + 1} draws 2 cards!")
+            for _ in range(2):
+                reshuffle_deck(deck, discard_pile)
+                if deck:
+                    hands[next_player].append(deck.pop())
+            current_player = next_player
+
+        # Wild Draw Four
+        elif "Wild Draw Four" in discard_pile[-1]:
+            next_player = (current_player + direction) % num_players
+            print(f"Player {next_player + 1} draws 4 cards!")
+            for _ in range(4):
+                reshuffle_deck(deck, discard_pile)
+                if deck:
+                    hands[next_player].append(deck.pop())
+            current_player = next_player
+
+    # UNO warning
+    if len(hands[current_player]) == 1:
+        print("UNO!")
+
+    # Win check
     if len(hands[current_player]) == 0:
         print(f"\n Player {current_player + 1} wins!")
         break
 
-    # Next player
-    current_player = (current_player + 1) % num_players
-
+    current_player = (current_player + direction) % num_players
