@@ -15,24 +15,89 @@ def format_card(card):
     rank, suit = card
     return f"{rank} of {suit}"
 
-# ----- Game Setup -----
-deck = create_deck()
-random.shuffle(deck)
+# Calculate the total value of a hand with aces counted properly
+def hand_value(hand):
+    total = 0
+    aces = 0
+    for rank, suit in hand:
+        if rank in ['J', 'Q', 'K']:
+            total += 10
+        elif rank == 'A':
+            total += 11
+            aces += 1
+        else:
+            total += int(rank)
+    while total > 21 and aces:
+        total -= 10
+        aces -= 1
+    return total
 
-player_hand = []
-dealer_hand = []
+# Main game loop
+while True:
+    deck = create_deck()
+    random.shuffle(deck)
 
-# Initial deal (2 cards each)
-player_hand.append(deal_card(deck))
-dealer_hand.append(deal_card(deck))
-player_hand.append(deal_card(deck))
-dealer_hand.append(deal_card(deck))
+    player_hand = []
+    dealer_hand = []
 
-# ----- Display What the Player Sees -----
-print("Your hand:")
-for card in player_hand:
-    print(f"  {format_card(card)}")
+    # Initial deal (2 cards each)
+    player_hand.append(deal_card(deck))
+    dealer_hand.append(deal_card(deck))
+    player_hand.append(deal_card(deck))
+    dealer_hand.append(deal_card(deck))
 
-print("\nDealer's hand:")
-print(f"  {format_card(dealer_hand[0])}")
-print("  [Hidden card]")
+    # ----- Display What the Player Sees -----
+    print("\nYour hand:")
+    for card in player_hand:
+        print(f"  {format_card(card)}")
+
+    print("\nDealer's hand:")
+    print(f"  {format_card(dealer_hand[0])}")
+    print("  [Hidden card]")
+
+    # ----- Player's Turn -----
+    while True:
+        value = hand_value(player_hand)
+        if value > 21:
+            print(f"\nYour total is {value}. You bust! Dealer wins!")
+            break
+        action = input("\nDo you want to [h]it or [s]tand? ").lower()
+        if action == 'h':
+            player_hand.append(deal_card(deck))
+            print("\nYour hand:")
+            for card in player_hand:
+                print(f"  {format_card(card)}")
+        elif action == 's':
+            break
+        else:
+            print("Please enter 'h' or 's'.")
+
+    # ----- Dealer's Turn -----
+    if hand_value(player_hand) <= 21:
+        print("\nDealer's turn:")
+        print("Dealer's hand:")
+        for card in dealer_hand:
+            print(f"  {format_card(card)}")
+        while hand_value(dealer_hand) < 17:
+            card = deal_card(deck)
+            dealer_hand.append(card)
+            print(f"Dealer hits: {format_card(card)}")
+        dealer_total = hand_value(dealer_hand)
+        print(f"Dealer's total: {dealer_total}")
+
+        # ----- Determine Outcome -----
+        player_total = hand_value(player_hand)
+        if dealer_total > 21:
+            print("Dealer busts! You win!")
+        elif dealer_total > player_total:
+            print("Dealer wins!")
+        elif dealer_total < player_total:
+            print("You win!")
+        else:
+            print("Push! It's a tie.")
+
+    # Ask to Play Again
+    play_again = input("\nPlay again? (y/n): ").strip().lower()
+    if play_again != 'y':
+        print("Thanks for playing!")
+        break
