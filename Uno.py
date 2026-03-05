@@ -1,5 +1,13 @@
 import random
 
+# Areli Roberts developed function
+#Takes in a player_card (string) which represents the card the player wants to play
+#and a top_card (string) which represents the card currently on top of the discard pile.
+#The function checks if the player_card follows Uno rules by matching either the color
+#or value of the top_card, or if it is a wild card.
+#It returns a boolean value: True if the card can be legally played, or False if it cannot. 
+
+
 # Deck Setup 
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
