@@ -1,5 +1,43 @@
 import random
 
+# Code line added by Areli Roberts
+player_name = input("Enter your name: ")
+
+# This list stores all the cards in the player's hand.
+# Using a list keeps the program simpler because we can store
+# many cards in one variable and loop through them instead of
+# creating separate variables like card1, card2, card3, etc.
+# This makes the program easier to expand if the player gains
+# or loses cards during the game.
+hand = ["Red 5", "Blue 2", "Green Skip", "Yellow 9"]
+
+print(player_name + "'s starting hand:", hand)
+
+#Areli Roberts developed function
+#Takes in a player_card (string) which represents the card the player wants to play
+#and a top_card (string) which represents the card currently on top of the discard pile.
+#The function checks if the player_card follows UNO rules by matching either the color
+#or value of the top_card, or if it is a wild card.
+#It returns a boolean value: True if the card can be legally played, or False if it cannot
+
+def checkPlayable(hand):
+    # In progress – currently just checks if the player has cards
+    if len(hand) > 0:
+        return True
+    else:
+        return False
+
+
+# Example input and output
+can_play = checkPlayable(hand)
+
+print("Does the player have cards they can play?", can_play)
+
+
+
+
+
+
 # Deck Setup 
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
