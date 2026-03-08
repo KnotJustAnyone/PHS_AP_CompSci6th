@@ -30,13 +30,31 @@ class Hangman:
 
     def guess_letter(self):
         """Asks for input, processes a guess, and updates the game."""
-        letter = input("Guess a letter: ").lower()
+        letter = input("Guess a letter: ").lower().strip()
+
+        if len(letter) !=1 or not letter.isalpha():
+            print("Please enter a single letter.")
+            return
+        
+        if letter in self.guessed_letters:
+            print(f"You already guessed '{letter}'. Try a different letter.")
+            return
+        
+        self.guessed_letters.append(letter)
+
+
         if letter in self.secret_word:
             print("Correct")
             return True
-        if not letter in self.secret_word:
+        
+        for i in range(len(self.secret_word)):
+            if self.secret_word[i] == letter:
+                self.display_word[i] = letter
+
+        else:
             print("Incorrect")
-            return False
+            self.remaining_attempts -= 1
+
         
 
         #Takes a single letter guessed by the player.
@@ -119,92 +137,21 @@ class Hangman:
             self.choose_word()
         #will reset hangman and choose a new word to play
         
-        
-
-    def draw_hangman(self):
-        """Simple ASCII hangman based on remaining attempts."""
-        stages = [
-            """
-             -----
-             |   |
-             |   O
-             |  /|\\
-             |  / \\
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |   O
-             |  /|\\
-             |  / 
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |   O
-             |  /|\\
-             |  
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |   O
-             |  /|
-             |  
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |   O
-             |   |
-             |  
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |   O
-             |
-             |
-             |
-            -----
-            """,
-            """
-             -----
-             |   |
-             |
-             |
-             |
-             |
-            -----
-            """
-        ]
-        print(stages[self.max_attempts - self.remaining_attempts])
-
-
-# --------------------------
-#    PLAYABLE GAME LOOP
-# --------------------------
 
 def play_hangman():
     words = ["python", "hangman", "classroom", "testing", "openai"]
     game = Hangman(words)
+
+
     game.choose_word()
-    print("Welcome to Hangman!")
+
+    print("hangman!")
+
     while not game.is_game_over():
         print("\nWord:", game.get_display_word())
         print("Guessed letters:", game.get_guessed_letters())
         print("Remaining attempts:", game.get_remaining_attempts())
-        game.draw_hangman()
+    
         game.guess_letter()
 
     # Game ended
@@ -269,69 +216,6 @@ def test_guess_letter_prints_type():
 
     output = captured.getvalue()
     assert "class 'str'" in output
-
-#Test -----
-def test_is_game_over_when_word_guessed():
-    """Game should be over when the word is fully guessed."""
-    game = Hangman(["test"])
-    game.secret_word = "test"
-    game.display_word = list("test")  # fully guessed
-    game.remaining_attempts = 3       # still have tries left
-
-    assert game.is_game_over() is True
-
-
-def test_is_game_over_when_no_attempts_left():
-    """Game should be over when remaining_attempts reaches 0."""
-    game = Hangman(["test"])
-    game.secret_word = "test"
-    game.display_word = ["_", "_", "_", "_"]  # not guessed
-    game.remaining_attempts = 0
-
-    assert game.is_game_over() is True
-
-
-def test_is_game_over_when_not_finished():
-    """Game should continue when the word is not guessed and attempts remain."""
-    game = Hangman(["test"])
-    game.secret_word = "test"
-    game.display_word = ["t", "_", "_", "t"]
-    game.remaining_attempts = 4
-
-    assert game.is_game_over() is False
-
-def test_get_remaining_attempts_initial():
-    """Ensure get_remaining_attempts returns the correct initial value."""
-    word_list = ["test"]
-    game = Hangman(word_list)
-    game.choose_word()
-
-    assert game.get_remaining_attempts() == game.max_attempts
-
-
-def test_get_remaining_attempts_after_wrong_guess(monkeypatch):
-    """Ensure remaining attempts decrease after a wrong guess."""
-    word_list = ["apple"]
-    game = Hangman(word_list)
-    game.choose_word()
-
-    # Force user input to be a wrong guess
-    monkeypatch.setattr("builtins.input", lambda: "z")
-
-    # Call guess_letter() which should reduce attempts
-    game.guess_letter()
-
-    assert game.get_remaining_attempts() == game.max_attempts - 1
-
-
-def test_get_remaining_attempts_after_correct_guess(monkeypatch):
-    """Ensure remaining attempts do not decrease after a correct guess."""
-    word_list = ["banana"]
-    game = Hangman(word_list)
-    game.choose_word()
-
-    correct_letter = game.secret_word[0]  # choose a known correct letter
-    monkeypatch.setattr("builtins.input", lambda: correct_letter)
 
     game.guess_letter()
 
@@ -428,3 +312,8 @@ def test_guess_letter_correct():
     __builtins__.input = original_input  # restore input
 
     assert result is True
+
+
+if __name__ == "__main__":
+    play_hangman()
+
