@@ -89,7 +89,7 @@ class dodge_game:
     
     def move_player(self, x, y):
         self.grid = self.move_objects(self.grid)
-        self.grid = self.make_objects(self.spawn_rate, self.grid)
+        self.grid = self.make_objects(self.spawn_rate, self.grid) # calls the make_objects function to add objects to the grid before moving the player
 
         if (x != 0 or y != 0) and self.grid[self.position[1]][self.position[0]] == "P":
             self.grid[self.position[1]][self.position[0]] = "O"
