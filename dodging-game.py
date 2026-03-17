@@ -8,17 +8,19 @@ class dodge_game:
     score = 0
     spawn_rate = 0
     mvm_amt = 1
+    has_hammer = False
 
     def __init__(self):
         # Student developed list: stores data for each object that can appear
         # allows the make_objects function to choose randomly from this list
         # easy access to what happens when an object is touched
+        # makes it easier to add other objects in any future development
         # makes the code cleaner
         self.objects = [
             ["X", self.kill_player, 12],
-            [">", self.boost_movement, 1],
-            ["H", self.hammer, 1],
-            ["B", self.bomb, 1]
+            [">", self.boost_movement, 13],
+            ["H", self.hammer, 14],
+            ["B", self.bomb, 15]
             # [object visual, function when touched, probability of appearing]
         ]
 
@@ -55,6 +57,7 @@ class dodge_game:
 
         while self.dead != True:
             mvm = input()
+            print(self.mvm_amt)
             if mvm == "w":
                 self.move_player(0,-self.mvm_amt)
             elif mvm == "s":
@@ -88,14 +91,18 @@ class dodge_game:
             print(" ".join(self.grid[i]))
     
     def move_player(self, x, y):
+        self.mvm_amt = 1
         self.grid = self.move_objects(self.grid)
         self.grid = self.make_objects(self.spawn_rate, self.grid) # calls the make_objects function to add objects to the grid before moving the player
 
         if (x != 0 or y != 0) and self.grid[self.position[1]][self.position[0]] == "P":
             self.grid[self.position[1]][self.position[0]] = "O"
 
-        self.position[0] += x
-        self.position[1] += y
+        if self.position[0] + x >= 0 and self.position[0] + x <= self.size:
+            self.position[0] += x
+        
+        if self.position[1] + y >= 0 and self.position[1] + y <= self.size:
+            self.position[1] += y
 
         x_pos = self.position[0]
         y_pos = self.position[1]
@@ -105,7 +112,7 @@ class dodge_game:
         else:
             for o in self.objects:
                 if self.grid[y_pos][x_pos] == o[0]:
-                    o[1]()
+                    self.grid[y_pos][x_pos] = o[1]()
         
         self.print_grid()
         
@@ -119,7 +126,7 @@ class dodge_game:
 
         total_cases = 0
         for x in self.objects:
-            total_cases += x[2]
+            total_cases = x[2]
 
         while len(positions) < num_objects:
             rand_choice = random.randint(0,self.size-1)
@@ -133,14 +140,10 @@ class dodge_game:
                 positions.append([rand_choice, rand_choice_two])
 
         for y in positions:
-            chosen_object = 0
+            chosen_object = -1
             for i in range(0,len(self.objects)):
-                if i == 0:
-                    if y[1] < self.objects[i][2]:
-                        chosen_object = i
-                else:
-                    if y[1] > self.objects[i-1][2] and y[1] <= self.objects[i][2]:
-                        chosen_object = i
+                if y[1] <= self.objects[i][2] and chosen_object < 0:
+                    chosen_object = i
             new_grid[y[0]][self.size-1] = self.objects[chosen_object][0]
         
         return new_grid
@@ -158,16 +161,28 @@ class dodge_game:
         return newGrid
 
     def kill_player(self):
-        print("You have died!")
-        self.dead = True
+        if self.has_hammer == False:
+            print("You have died!")
+            self.dead = True
+            return "X"
+        else:
+            self.has_hammer = False
+            return "P"
 
-    def boost_movement(self, num_boost):
-        return
+    def boost_movement(self):
+        self.mvm_amt = 2
+        print(self.mvm_amt)
+        return "P"
     
     def hammer(self):
-        return
+        self.has_hammer = True
+        return "P"
     
     def bomb(self):
-        return
+        for y in self.grid:
+            for x in range(0,len(y)):
+                if y[x] != "O" and y[x] != "P":
+                    y[x] = "O"
+        return "P"
 
 dodge_game()
