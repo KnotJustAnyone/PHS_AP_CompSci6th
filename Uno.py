@@ -1,5 +1,9 @@
 import random
 
+#Code line added by Areli Roberts
+player_card = input("Enter the card you want to play: ")
+top_card = input("Enter the top card on the discard pile: ")
+
 # Deck Setup 
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
