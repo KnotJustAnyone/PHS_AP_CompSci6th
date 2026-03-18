@@ -137,6 +137,22 @@ class Hangman:
             self.choose_word()
         #will reset hangman and choose a new word to play
         
+'''
+
+Maddie Korman developed function
+
+Take in a 5 letter word board, an array of inputs (_ _ _ _ _)
+
+   inputs align with letters in the word or not
+
+   if letter is in word, fills blank
+
+Returns if the player is right or wrong, tells them to guess again
+
+   if word is guessed or no more guesses left, game is over
+
+'''
+
 
 def play_hangman():
     words = ["python", "hangman", "classroom", "testing", "openai"]
