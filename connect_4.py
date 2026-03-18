@@ -1,6 +1,4 @@
-#make data structure and display board
-#ask user what move they want to play & add symbol
-
+import random
 ROWS = 6
 COLUMNS = 7
 #traditional game is 6 x 7
@@ -14,6 +12,7 @@ def create_board():
         board.append(row)
     return board
 
+
 def print_board(board):
     for row in board:
         print("|", " ".join(row),"|")
@@ -26,6 +25,7 @@ def play_piece(board, column, current_player):
             board[row][column] = current_player
             return
     #plays the piece by dropping it the selected column
+
 def valid_move(board,column):
     return board[0][column]=="."
     #checks if the selected column is full
@@ -35,7 +35,7 @@ def check_winner(board, current_player):
     for r in range(ROWS):
         for c in range(COLUMNS-3):
             if board[r][c]==current_player and board[r][c+1]==current_player and board[r][c+2]==current_player and board[r][c+3]==current_player:
-                return True
+                return True       
     #Vertical
     for r in range(ROWS-3):
         for c in range(COLUMNS):
@@ -51,37 +51,9 @@ def check_winner(board, current_player):
         for c in range(COLUMNS-3):
             if board[r][c]==current_player and board[r-1][c+1]==current_player and board[r-2][c+2]==current_player and board[r-3][c+3]==current_player:
                 return True
-            
+                
     return False
 
-
-def valid_move(board,column):
-    return board[0][column]=="."
-    #checks if the selected column is full
-
-def check_winner(board, current_player):
-    #Horizontal 
-    for r in range(ROWS):
-        for c in range(COLUMNS-3):
-            if board[r][c]==current_player and board[r][c+1]==current_player and board[r][c+2]==current_player and board[r][c+3]==current_player:
-                return True
-    #Vertical
-    for r in range(ROWS-3):
-        for c in range(COLUMNS):
-            if board[r][c]==current_player and board[r+1][c]==current_player and board[r+2][c]==current_player and board[r+3][c]==current_player:
-                return True
-    #Diagonal down-right
-    for r in range(ROWS-3):
-        for c in range(COLUMNS-3):
-            if board[r][c]==current_player and board[r+1][c+1]==current_player and board[r+2][c+2]==current_player and board[r+3][c+3]==current_player:
-                return True
-    #Diagonal up-right
-    for r in range(3,ROWS):
-        for c in range(COLUMNS-3):
-            if board[r][c]==current_player and board[r-1][c+1]==current_player and board[r-2][c+2]==current_player and board[r-3][c+3]==current_player:
-                return True
-            
-    return False
 
 def board_full(board):
     for c in range(COLUMNS):
@@ -90,59 +62,111 @@ def board_full(board):
     return True
 
 
-while True:
-    board = create_board()
-    #Player X is player 1, Player O is player 2
-    current_player = "X"
+game_version = input("Would you like to play against a friend or the computer? (friend/computer): ")
 
+if game_version == "friend":
     while True:
-        print_board(board)
-        print("Player", current_player, "turn")
+        board = create_board()
+    
+        #Player X is player 1, Player O is player 2
+        current_player = "X"
 
-        try: 
-            column = int(input("Choose a column (1-7):"))-1
-            #asks user to choose a column to drop the play piece in a column
-        except ValueError:
-            print("Not a number. Try again >:C")
-            continue
-
-        if column <0 or column >= COLUMNS:
-            print("Invalid column. Try again. :] ")
-            continue
-        if not valid_move(board, column):
-            print("That column is full. Try again :/")
-            continue
-
-        play_piece(board, column, current_player)
-
-        #Check for winner
-        if check_winner(board, current_player):
+        while True:
             print_board(board)
-            print("Player", current_player, "wins! :D")
+            print("Player", current_player, "turn")
+
+            try: 
+                column = int(input("Choose a column (1-7):"))-1 #input here
+            except ValueError:
+                print("Not a number. Try again >:C") #output if input is not a number
+                continue
+
+            if column <0 or column >= COLUMNS:
+                print("Invalid column. Try again. :] ") #output if input is not within the correct range
+                continue
+            if not valid_move(board, column):
+                print("That column is full. Try again :/") #output if column is full
+                continue
+
+            play_piece(board, column, current_player) #output here (board updated)
+
+            if check_winner(board, current_player):
+                print_board(board)
+                print("Player", current_player, "wins! :D")
+                break
+
+            if board_full(board):
+                print_board(board)
+                print("It's a tie! :O")
+                break
+
+            if current_player == "X":
+                current_player = "O"
+            else:
+                current_player = "X"
+    
+        play_again = input("Play again? (y/n): ")
+        if play_again != "y":
+            print("Thanks for playing! :>")
             break
 
-        if board_full(board):
-            print_board(board)
-            print("It's a tie! :O")
-            break
-
-
-        #switch players
-        if current_player == "X":
-            current_player = "O"
-        else:
+elif game_version == "computer":
+    while True:
+        board = create_board()
+        print("You are Player X, and the computer is Player O. :3")
+        random_number = random.randint(1,2)
+        if random_number == 1:
             current_player = "X"
+            print("You go first! :D")
+        else:
+            current_player = "O"
+            print("The computer goes first! :O")
+        
+        while True:
+            print_board(board)
+            print("Player", current_player, "turn")
+
+            if current_player == "X":
+                try: 
+                    column = int(input("Choose a column (1-7):"))-1 #input here
+                except ValueError:
+                    print("Not a number. Try again >:C") #output if input is not a number
+                    continue
+
+                if column <0 or column >= COLUMNS:
+                    print("Invalid column. Try again. :] ") #output if input is not within the correct range
+                    continue
+                if not valid_move(board, column):
+                    print("That column is full. Try again :/") #output if column is full
+                    continue
+
+            elif current_player == "O":
+                column = random.randint(0,6)
+                while not valid_move(board, column):
+                    column = random.randint(0,6)
+                print("The computer chooses column", column+1)
+
+            play_piece(board, column, current_player) #output here (board updated)
+
+            if check_winner(board, current_player):
+                print_board(board)
+                print("Player", current_player, "wins! :D")
+                break
+
+            if board_full(board):
+                print_board(board)
+                print("It's a tie! :O")
+                break
+
+            if current_player == "X":
+                current_player = "O"
+            else:
+                current_player = "X"
     
-    #Ask player if they want to play again 
-    answer = input("Play again? (y/n): ")
-    if answer != "y":
-        print("Thanks for playing! :>")
-        break
+        play_again = input("Play again? (y/n): ")
+        if play_again != "y":
+            print("Thanks for playing! :>")
+            break
 
-    
-
-    
-
-
-
-
+else:
+    print("Invalid input. Please restart the game and choose 'friend' or 'computer'. >:[ ")
