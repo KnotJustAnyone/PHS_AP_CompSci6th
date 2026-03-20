@@ -50,6 +50,7 @@ while True:
     print("\nYour hand:")
     for card in player_hand:
         print(f"  {format_card(card)}")
+    print(f"Hand value: {hand_value(player_hand)}")
 
     print("\nDealer's hand:")
     print(f"  {format_card(dealer_hand[0])}")
@@ -67,7 +68,7 @@ while True:
             print("\nYour hand:")
             for card in player_hand:
                 print(f"  {format_card(card)}")
-            print(f"Hand value: {calculate_hand_value(player_hand)}")
+            print(f"Hand value: {hand_value(player_hand)}")
         elif action == 's':
             break
         else:
