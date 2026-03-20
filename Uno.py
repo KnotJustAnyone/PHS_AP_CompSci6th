@@ -1,5 +1,13 @@
 import random
 
+# Areli Roberts developed function
+#Takes in a player_card (string) which represents the card the player wants to play
+#and a top_card (string) which represents the card currently on top of the discard pile.
+#The function checks if the player_card follows Uno rules by matching either the color
+#or value of the top_card, or if it is a wild card.
+#It returns a boolean value: True if the card can be legally played, or False if it cannot. 
+
+
 # Deck Setup 
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
@@ -17,6 +25,7 @@ def create_uno_deck():
     deck.extend(["Wild Draw Four"] * 4)
     return deck
 
+
 def deal_hands(deck, num_players, cards_per_player=7):
     hands = [[] for _ in range(num_players)]
     for _ in range(cards_per_player):
@@ -24,16 +33,17 @@ def deal_hands(deck, num_players, cards_per_player=7):
             hands[player].append(deck.pop())
     return hands
 
+
 # Helper Functions 
 def parse_card(card):
-    """Return color and value, ignoring declared color in parentheses."""
-    if "(" in card:  # e.g., Wild (Red)
+    if "(" in card:
         base, declared = card.split("(")
         return declared.strip(")"), base.strip()
     if card.startswith("Wild"):
         return "Wild", card
     color, value = card.split(" ", 1)
     return color, value
+
 
 def get_wild_color():
     colors = ["Red", "Yellow", "Green", "Blue"]
@@ -42,6 +52,7 @@ def get_wild_color():
         if color in colors:
             return color
         print("Invalid color. Try again.")
+
 
 def is_playable(card, top_card):
     card_color, card_value = parse_card(card)
@@ -52,6 +63,7 @@ def is_playable(card, top_card):
         or card_value == top_value
     )
 
+
 # Game Setup
 num_players = int(input("How many players? "))
 
@@ -60,7 +72,6 @@ random.shuffle(deck)
 
 hands = deal_hands(deck, num_players)
 
-# Initialize discard pile and handle first card if Wild
 top_card = deck.pop()
 if top_card.startswith("Wild"):
     chosen_color = get_wild_color()
@@ -68,6 +79,8 @@ if top_card.startswith("Wild"):
 
 discard_pile = [top_card]
 current_player = 0
+direction = 1   # 1 = clockwise, -1 = counterclockwise
+
 
 # Main Game Loop
 while True:
@@ -78,28 +91,22 @@ while True:
     for i, card in enumerate(hands[current_player]):
         print(f"{i}: {card}")
 
-    # Determine playable cards
     playable_indices = [
         i for i, card in enumerate(hands[current_player])
         if is_playable(card, discard_pile[-1])
     ]
 
-    # Draw if no playable cards
     if not playable_indices:
         print("No playable cards — drawing one.")
         if deck:
             hands[current_player].append(deck.pop())
-        else:
-            print("Deck is empty, skipping draw.")
     else:
-        # Player chooses a card to play
         while True:
             try:
                 choice = int(input("Choose a card index to play: "))
                 if choice in playable_indices:
                     chosen_card = hands[current_player].pop(choice)
 
-                    # Handle Wild cards
                     if chosen_card.startswith("Wild"):
                         chosen_color = get_wild_color()
                         chosen_card = f"{chosen_card} ({chosen_color})"
@@ -111,11 +118,21 @@ while True:
             except ValueError:
                 print("Please enter a valid number.")
 
-    # Check for win
+    # Check win
     if len(hands[current_player]) == 0:
         print(f"\n Player {current_player + 1} wins!")
         break
 
-    # Next player
-    current_player = (current_player + 1) % num_players
+    # Handle Order Effects (Skip & Reverse)
+    _, value = parse_card(discard_pile[-1])
 
+    if value == "Reverse":
+        direction *= -1
+        print("Play direction reversed!")
+
+    elif value == "Skip":
+        print("Next player skipped!")
+        current_player = (current_player + direction) % num_players
+
+    # Move to next player
+    current_player = (current_player + direction) % num_players
