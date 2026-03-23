@@ -15,7 +15,7 @@ class Hangman:
         self.remaining_attempts = 6             # Number of incorrect guesses allowed
         self.max_attempts = 6                   # Maximum allowed attempts
         
-
+    
     def choose_word(self):
 
         #Randomly selects a word from the word list and sets it as the secret word.
@@ -28,6 +28,8 @@ class Hangman:
         self.guessed_letters = []
         self.remaining_attempts = self.max_attempts
 
+    #this is the function for the list. This function checks through the word 
+    #(list of strings) to see if the guessed letter is in it.
     def guess_letter(self):
         """Asks for input, processes a guess, and updates the game."""
         letter = input("Guess a letter: ").lower().strip()
@@ -42,15 +44,12 @@ class Hangman:
         
         self.guessed_letters.append(letter)
 
-
         if letter in self.secret_word:
+            # Update display_word
+            for i in range(len(self.secret_word)):
+                if self.secret_word[i] == letter:
+                    self.display_word[i] = letter
             print("Correct")
-            return True
-        
-        for i in range(len(self.secret_word)):
-            if self.secret_word[i] == letter:
-                self.display_word[i] = letter
-
         else:
             print("Incorrect")
             self.remaining_attempts -= 1
@@ -75,12 +74,12 @@ class Hangman:
             return False, "The game is already over." 
 
         guess = guess.strip().lower ()
-        if not guess. isaplha():
+        if not guess.isalpha():
             return False, "Your guess should contain letters only."
 
         if guess == self.secret_word: 
             self.display_word = list(self.secret_word) 
-            return True, f"Corret! The word was'{self.secret_word}'."
+            return True, f"Correct! The word was'{self.secret_word}'."
         else:
                 # Wrong guess costs one attempt
                 self.remaining_attempts -= 1
