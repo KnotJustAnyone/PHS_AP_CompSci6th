@@ -32,36 +32,36 @@ class Hangman:
     #(list of strings) to see if the guessed letter is in it.
     def guess_letter(self):
         """Asks for input, processes a guess, and updates the game."""
+        if self.secret_word is None:
+            raise ValueError("No secret word chosen yet. Call choose_word() before guessing.")
+
         letter = input("Guess a letter: ").lower().strip()
 
-        if len(letter) !=1 or not letter.isalpha():
+        if len(letter) != 1 or not letter.isalpha():
             print("Please enter a single letter.")
-            return
-        
+            return False
+
         if letter in self.guessed_letters:
             print(f"You already guessed '{letter}'. Try a different letter.")
-            return
-        
+            return False
+
         self.guessed_letters.append(letter)
 
         if letter in self.secret_word:
-            # Update display_word
             for i in range(len(self.secret_word)):
                 if self.secret_word[i] == letter:
                     self.display_word[i] = letter
             print("Correct")
+            return True
         else:
-            print("Incorrect")
             self.remaining_attempts -= 1
+            print("Incorrect")
+            return False
 
-        
-
-        #Takes a single letter guessed by the player.
-        #- Updates guessed_letters
-        #- Updates display_word if correct
-        #- Decreases remaining_attempts if incorrect
-   
-        pass
+        # Takes a single letter guessed by the player.
+        # - Updates guessed_letters
+        # - Updates display_word if correct
+        # - Decreases remaining_attempts if incorrect
 
     def guess_word(self, guess):
         """
@@ -116,6 +116,26 @@ class Hangman:
         #Returns how many incorrect guesses the player has left.
     
         return self.remaining_attempts
+
+    def draw_hangman(self):
+        """Displays a simple hangman stage based on remaining attempts."""
+        stages = [
+            "\n  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n /|\  |\n      |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n /|\  |\n /    |\n      |\n=========\n",
+            "\n  +---+\n  |   |\n  O   |\n /|\  |\n / \  |\n      |\n=========\n",
+        ]
+
+        index = self.max_attempts - self.remaining_attempts
+        if index < 0:
+            index = 0
+        elif index >= len(stages):
+            index = len(stages) - 1
+
+        print(stages[index])
 
     def reset_game(self):
         
@@ -174,7 +194,7 @@ def play_hangman():
         print("\n🎉 You won! The word was:", game.secret_word)
     else:
         print("\n💀 You lost! The word was:", game.secret_word)
-        game.draw_hangman()
+        ##game.draw_hangman()
 
 def test_choose_word_initializes_secret_and_display(self):
     """Test that choose_word properly initializes the game state."""
