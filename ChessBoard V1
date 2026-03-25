@@ -45,6 +45,7 @@ function draw() {
       }
     }
   }
+
   let wK = findKing('wK'), bK = findKing('bK');
   checkData.w.forEach(p => drawAssaultRifle(p.x, p.y, wK.x, wK.y));
   checkData.b.forEach(p => drawAssaultRifle(p.x, p.y, bK.x, bK.y));
