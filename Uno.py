@@ -1,9 +1,14 @@
 import random
 
+# Areli Roberts developed function
+#Takes in a player_card (string) which represents the card the player wants to play
+#and a top_card (string) which represents the card currently on top of the discard pile.
+#The function checks if the player_card follows Uno rules by matching either the color
+#or value of the top_card, or if it is a wild card.
+#It returns a boolean value: True if the card can be legally played, or False if it cannot. 
 
-# Deck Setup
 
-
+# Deck Setup 
 def create_uno_deck():
     colors = ["Red", "Yellow", "Green", "Blue"]
     action_cards = ["Skip", "Reverse", "Draw Two"]
@@ -31,10 +36,7 @@ def deal_hands(deck, num_players, cards_per_player=7):
     return hands
 
 
-
-# Helper Functions
-
-
+# Helper Functions 
 def parse_card(card):
     if "(" in card:
         base, declared = card.split("(")
@@ -90,7 +92,7 @@ if top_card.startswith("Wild"):
 discard_pile = [top_card]
 
 current_player = 0
-direction = 1  # 1 = forward, -1 = backward
+direction = 1   # 1 = clockwise, -1 = counterclockwise
 
 
 # Main Game Loop
@@ -179,4 +181,16 @@ while True:
         print(f"\n Player {current_player + 1} wins!")
         break
 
+    # Handle Order Effects (Skip & Reverse)
+    _, value = parse_card(discard_pile[-1])
+
+    if value == "Reverse":
+        direction *= -1
+        print("Play direction reversed!")
+
+    elif value == "Skip":
+        print("Next player skipped!")
+        current_player = (current_player + direction) % num_players
+
+    # Move to next player
     current_player = (current_player + direction) % num_players
