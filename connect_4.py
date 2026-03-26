@@ -61,72 +61,20 @@ def board_full(board):
             return False
     return True
 
+if __name__ == "__main__":
+    game_version = input("Would you like to play against a friend or the computer? (friend/computer): ")
 
-game_version = input("Would you like to play against a friend or the computer? (friend/computer): ")
-
-if game_version == "friend":
-    while True:
-        board = create_board()
-    
-        #Player X is player 1, Player O is player 2
-        current_player = "X"
-
+    if game_version == "friend":
         while True:
-            print_board(board)
-            print("Player", current_player, "turn")
-
-            try: 
-                column = int(input("Choose a column (1-7):"))-1 #input here
-            except ValueError:
-                print("Not a number. Try again >:C") #output if input is not a number
-                continue
-
-            if column <0 or column >= COLUMNS:
-                print("Invalid column. Try again. :] ") #output if input is not within the correct range
-                continue
-            if not valid_move(board, column):
-                print("That column is full. Try again :/") #output if column is full
-                continue
-
-            play_piece(board, column, current_player) #output here (board updated)
-
-            if check_winner(board, current_player):
-                print_board(board)
-                print("Player", current_player, "wins! :D")
-                break
-
-            if board_full(board):
-                print_board(board)
-                print("It's a tie! :O")
-                break
-
-            if current_player == "X":
-                current_player = "O"
-            else:
-                current_player = "X"
-    
-        play_again = input("Play again? (y/n): ")
-        if play_again != "y":
-            print("Thanks for playing! :>")
-            break
-
-elif game_version == "computer":
-    while True:
-        board = create_board()
-        print("You are Player X, and the computer is Player O. :3")
-        random_number = random.randint(1,2)
-        if random_number == 1:
-            current_player = "X"
-            print("You go first! :D")
-        else:
-            current_player = "O"
-            print("The computer goes first! :O")
+            board = create_board()
         
-        while True:
-            print_board(board)
-            print("Player", current_player, "turn")
+            #Player X is player 1, Player O is player 2
+            current_player = "X"
 
-            if current_player == "X":
+            while True:
+                print_board(board)
+                print("Player", current_player, "turn")
+
                 try: 
                     column = int(input("Choose a column (1-7):"))-1 #input here
                 except ValueError:
@@ -140,33 +88,85 @@ elif game_version == "computer":
                     print("That column is full. Try again :/") #output if column is full
                     continue
 
-            elif current_player == "O":
-                column = random.randint(0,6)
-                while not valid_move(board, column):
-                    column = random.randint(0,6)
-                print("The computer chooses column", column+1)
+                play_piece(board, column, current_player) #output here (board updated)
 
-            play_piece(board, column, current_player) #output here (board updated)
+                if check_winner(board, current_player):
+                    print_board(board)
+                    print("Player", current_player, "wins! :D")
+                    break
 
-            if check_winner(board, current_player):
-                print_board(board)
-                print("Player", current_player, "wins! :D")
+                if board_full(board):
+                    print_board(board)
+                    print("It's a tie! :O")
+                    break
+
+                if current_player == "X":
+                    current_player = "O"
+                else:
+                    current_player = "X"
+        
+            play_again = input("Play again? (y/n): ")
+            if play_again != "y":
+                print("Thanks for playing! :>")
                 break
 
-            if board_full(board):
-                print_board(board)
-                print("It's a tie! :O")
-                break
-
-            if current_player == "X":
-                current_player = "O"
-            else:
+    elif game_version == "computer":
+        while True:
+            board = create_board()
+            print("You are Player X, and the computer is Player O. :3")
+            random_number = random.randint(1,2)
+            if random_number == 1:
                 current_player = "X"
-    
-        play_again = input("Play again? (y/n): ")
-        if play_again != "y":
-            print("Thanks for playing! :>")
-            break
+                print("You go first! :D")
+            else:
+                current_player = "O"
+                print("The computer goes first! :O")
+            
+            while True:
+                print_board(board)
+                print("Player", current_player, "turn")
 
-else:
-    print("Invalid input. Please restart the game and choose 'friend' or 'computer'. >:[ ")
+                if current_player == "X":
+                    try: 
+                        column = int(input("Choose a column (1-7):"))-1 #input here
+                    except ValueError:
+                        print("Not a number. Try again >:C") #output if input is not a number
+                        continue
+
+                    if column <0 or column >= COLUMNS:
+                        print("Invalid column. Try again. :] ") #output if input is not within the correct range
+                        continue
+                    if not valid_move(board, column):
+                        print("That column is full. Try again :/") #output if column is full
+                        continue
+
+                elif current_player == "O":
+                    column = random.randint(0,6)
+                    while not valid_move(board, column):
+                        column = random.randint(0,6)
+                    print("The computer chooses column", column+1)
+
+                play_piece(board, column, current_player) #output here (board updated)
+
+                if check_winner(board, current_player):
+                    print_board(board)
+                    print("Player", current_player, "wins! :D")
+                    break
+
+                if board_full(board):
+                    print_board(board)
+                    print("It's a tie! :O")
+                    break
+
+                if current_player == "X":
+                    current_player = "O"
+                else:
+                    current_player = "X"
+        
+            play_again = input("Play again? (y/n): ")
+            if play_again != "y":
+                print("Thanks for playing! :>")
+                break
+
+    else:
+        print("Invalid input. Please restart the game and choose 'friend' or 'computer'. >:[ ")
