@@ -15,7 +15,7 @@ def play_game():
         strats['X'] = human_input
     else:
         return None
-    print("Who will be playing as y?")
+    print("Who will be playing as O?")
     print("1) Human")
     print("Any other key to return to main menu")
     choice = input()
