@@ -6,12 +6,13 @@ COLUMNS = 7
 import connect_4 as c_4
 
 def play_game():
+    strats = {}
     print("Who will be playing as X?")
     print("1) Human")
     print("Any other key to return to main menu")
     choice = input()
     if choice == '1':
-        x_strat = human_input
+        strats['X'] = human_input
     else:
         return None
     print("Who will be playing as y?")
@@ -19,13 +20,21 @@ def play_game():
     print("Any other key to return to main menu")
     choice = input()
     if choice == '1':
-        o_strat = human_input
+        strats['O'] = human_input
     print("Begining Game...")
     board = c_4.create_board()
     current_player = 'X'
     game_on = True
     while game_on:
-        game_on = False #Development paused here
+        column = strats[current_player](board)
+        if type(column) != type(0):
+            print(f"{current_player} did not give a column, trying again...")
+        if column < 0 or column >= COLUMNS:
+            print(f"{current_player} attempted to play off board, trying again...")
+            continue
+        if not c_4.valid_move(board, column):
+            print(f"{current_player} attempted to play in a full column, trying again...")
+            continue
     return None
 
 def human_input(board):
