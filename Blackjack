@@ -1,14 +1,20 @@
 import random
 
-# Create a standard 52-card deck
-def create_deck():
+# Create a shoe with multiple decks
+def create_shoe(num_decks):
     suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
     ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-    return [(rank, suit) for suit in suits for rank in ranks]
+    shoe = [(rank, suit) for _ in range(num_decks) for suit in suits for rank in ranks]
+    random.shuffle(shoe)
+    return shoe
 
-# Deal one card from the deck
-def deal_card(deck):
-    return deck.pop()
+# Deal one card from the shoe
+def deal_card(shoe):
+    if len(shoe) < 10:  # Reshuffle when shoe gets low
+        print("\n[Shoe is running low. Reshuffling...]")
+        shoe.clear()
+        shoe.extend(create_shoe(num_decks))
+    return shoe.pop()
 
 # Display cards nicely
 def format_card(card):
@@ -32,74 +38,155 @@ def hand_value(hand):
         aces -= 1
     return total
 
-# Main game loop
-while True:
-    deck = create_deck()
-    random.shuffle(deck)
+# Display player's balance
+def display_balance(balance):
+    print(f"\n{'='*40}")
+    print(f"Your balance: ${balance:.2f}")
+    print(f"{'='*40}")
 
-    player_hand = []
-    dealer_hand = []
-
-    # Initial deal (2 cards each)
-    player_hand.append(deal_card(deck))
-    dealer_hand.append(deal_card(deck))
-    player_hand.append(deal_card(deck))
-    dealer_hand.append(deal_card(deck))
-
-    # ----- Display What the Player Sees -----
-    print("\nYour hand:")
-    for card in player_hand:
-        print(f"  {format_card(card)}")
-    print(f"Hand value: {hand_value(player_hand)}")
-
-    print("\nDealer's hand:")
-    print(f"  {format_card(dealer_hand[0])}")
-    print("  [Hidden card]")
-
-    # ----- Player's Turn -----
+# Get bet from player
+def get_bet(balance):
     while True:
-        value = hand_value(player_hand)
-        if value > 21:
-            print(f"\nYour total is {value}. You bust! Dealer wins!")
-            break
-        action = input("\nDo you want to [h]it or [s]tand? ").lower()
-        if action == 'h':
-            player_hand.append(deal_card(deck))
-            print("\nYour hand:")
-            for card in player_hand:
-                print(f"  {format_card(card)}")
-            print(f"Hand value: {hand_value(player_hand)}")
-        elif action == 's':
-            break
-        else:
-            print("Please enter 'h' or 's'.")
+        try:
+            bet = float(input(f"\nEnter your bet ($1 - ${balance:.2f}): $"))
+            if bet < 1 or bet > balance:
+                print(f"Please enter a valid bet between $1 and ${balance:.2f}")
+                continue
+            return bet
+        except ValueError:
+            print("Please enter a valid number.")
 
-    # ----- Dealer's Turn -----
-    if hand_value(player_hand) <= 21:
-        print("\nDealer's turn:")
-        print("Dealer's hand:")
-        for card in dealer_hand:
+# Main game loop
+def main():
+    print("="*40)
+    print("Welcome to Blackjack!")
+    print("="*40)
+    
+    # Get starting balance
+    while True:
+        try:
+            starting_balance = float(input("\nEnter your starting balance: $"))
+            if starting_balance < 1:
+                print("Please enter at least $1")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get number of decks
+    while True:
+        try:
+            num_decks = int(input("How many decks would you like to use (1-8)? "))
+            if num_decks < 1 or num_decks > 8:
+                print("Please enter a number between 1 and 8.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    balance = starting_balance
+    shoe = create_shoe(num_decks)
+    
+    # Main game loop
+    while balance > 0:
+        display_balance(balance)
+        
+        # Get bet
+        bet = get_bet(balance)
+        balance -= bet
+        
+        # Create new shoe if needed
+        if len(shoe) < 20:
+            shoe = create_shoe(num_decks)
+        
+        player_hand = []
+        dealer_hand = []
+
+        # Initial deal (2 cards each)
+        player_hand.append(deal_card(shoe))
+        dealer_hand.append(deal_card(shoe))
+        player_hand.append(deal_card(shoe))
+        dealer_hand.append(deal_card(shoe))
+
+        # ----- Display What the Player Sees -----
+        print("\nYour hand:")
+        for card in player_hand:
             print(f"  {format_card(card)}")
-        while hand_value(dealer_hand) < 17:
-            card = deal_card(deck)
-            dealer_hand.append(card)
-            print(f"Dealer hits: {format_card(card)}")
-        dealer_total = hand_value(dealer_hand)
-        print(f"Dealer's total: {dealer_total}")
+        print(f"Hand value: {hand_value(player_hand)}")
 
-        # ----- Determine Outcome -----
-        player_total = hand_value(player_hand)
-        if dealer_total > 21:
-            print("Dealer busts! You win!")
-        elif dealer_total > player_total:
-            print("Dealer wins!")
-        elif dealer_total < player_total:
-            print("You win!")
+        print("\nDealer's hand:")
+        print(f"  {format_card(dealer_hand[0])}")
+        print("  [Hidden card]")
+
+        # ----- Player's Turn -----
+        player_busted = False
+        while True:
+            value = hand_value(player_hand)
+            if value > 21:
+                print(f"\nYour total is {value}. You bust!")
+                player_busted = True
+                break
+            action = input("\nDo you want to [h]it or [s]tand? ").lower()
+            if action == 'h':
+                player_hand.append(deal_card(shoe))
+                print("\nYour hand:")
+                for card in player_hand:
+                    print(f"  {format_card(card)}")
+                print(f"Hand value: {hand_value(player_hand)}")
+            elif action == 's':
+                break
+            else:
+                print("Please enter 'h' or 's'.")
+
+        # ----- Dealer's Turn -----
+        if not player_busted:
+            print("\nDealer's turn:")
+            print("Dealer's hand:")
+            for card in dealer_hand:
+                print(f"  {format_card(card)}")
+            while hand_value(dealer_hand) < 17:
+                card = deal_card(shoe)
+                dealer_hand.append(card)
+                print(f"Dealer hits: {format_card(card)}")
+            dealer_total = hand_value(dealer_hand)
+            print(f"Dealer's total: {dealer_total}")
+
+            # ----- Determine Outcome -----
+            player_total = hand_value(player_hand)
+            if dealer_total > 21:
+                print("Dealer busts! You win!")
+                balance += bet * 2
+            elif dealer_total > player_total:
+                print("Dealer wins!")
+            elif dealer_total < player_total:
+                print("You win!")
+                balance += bet * 2
+            else:
+                print("Push! It's a tie.")
+                balance += bet
         else:
-            print("Push! It's a tie.")
+            print("Dealer wins!")
 
-    # Ask to Play Again
-    play_again = input("\nPlay again? (y/n): ").strip().lower()
-    if play_again != 'y':
-        print("Thanks for playing!")
-        break
+        # Ask to Play Again
+        if balance > 0:
+            play_again = input("\nPlay another hand? (y/n): ").strip().lower()
+            if play_again != 'y':
+                break
+        else:
+            print("\nYou're out of money!")
+            break
+
+    # Game Over
+    print("\n" + "="*40)
+    print("Game Over!")
+    print(f"Starting balance: ${starting_balance:.2f}")
+    print(f"Ending balance: ${balance:.2f}")
+    profit_loss = balance - starting_balance
+    if profit_loss >= 0:
+        print(f"Profit: ${profit_loss:.2f}")
+    else:
+        print(f"Loss: ${abs(profit_loss):.2f}")
+    print("="*40)
+
+if __name__ == "__main__":
+    main()
