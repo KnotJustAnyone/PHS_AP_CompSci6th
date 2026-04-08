@@ -7,6 +7,11 @@ import random
 #or value of the top_card, or if it is a wild card.
 #It returns a boolean value: True if the card can be legally played, or False if it cannot. 
 
+# List used:
+# The deck and player hands are stored as lists.
+# Using lists makes the program simpler because we can store many cards
+# in one variable and easily add/remove cards with append() and pop().
+# This is easier than creating separate variables for every single card.
 
 # Deck Setup 
 def create_uno_deck():
@@ -136,3 +141,9 @@ while True:
 
     # Move to next player
     current_player = (current_player + direction) % num_players
+
+# Input and output examples
+print("\n--- Function Test Examples ---")
+print(is_playable("Red 5", "Red 9"))   # Expected: True
+print(is_playable("Blue 7", "Red 9"))  # Expected: False
+print(is_playable("Wild", "Green 2"))  # Expected: True
