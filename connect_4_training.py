@@ -7,20 +7,18 @@ import connect_4 as c_4
 
 def play_game():
     strats = {}
-    print("Who will be playing as X?")
-    print("1) Human")
-    print("Any other key to return to main menu")
-    choice = input()
-    if choice == '1':
-        strats['X'] = human_input
-    else:
-        return None
-    print("Who will be playing as O?")
-    print("1) Human")
-    print("Any other key to return to main menu")
-    choice = input()
-    if choice == '1':
-        strats['O'] = human_input
+    for player in ['X','O']:
+        print(f"Who will be playing as {player}?")
+        print("1) Human")
+        print("2) Random")
+        print("Any other key to return to main menu")
+        choice = input()
+        if choice == '1':
+            strats[player] = human_input
+        elif choice == '2':
+            strats[player] = computer_0
+        else:
+            return None
     print("Begining Game...")
     board = c_4.create_board()
     current_player = 'X'
@@ -59,6 +57,9 @@ def human_input(board, current_player):
     print(f"Player {current_player}, which column do you want to play in?")
     column = int(input("Choose a column (1-7):"))-1
     return column
+
+def computer_0(board, current_player):
+    return random.randint(0,6)
 
 def main_menu():
     choice = None
