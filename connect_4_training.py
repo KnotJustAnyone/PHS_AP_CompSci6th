@@ -1,9 +1,29 @@
 import random
+import json
 
 ROWS = 6
 COLUMNS = 7
 
 import connect_4 as c_4
+
+def human_input(board, current_player):
+    c_4.print_board(board)
+    print(f"Player {current_player}, which column do you want to play in?")
+    column = int(input("Choose a column (1-7):"))-1
+    return column
+
+def computer_0(board, current_player):
+    return random.randint(0,6)
+
+try:
+    with open('strategy1.json','r') as file:
+        strategy_1 = json.load(file)
+except:
+    strategy_1 = [1 for _ in range(7)]
+    json.dump(strategy_1,open('strategy1.json','w'), indent = 4)
+
+def computer_1(board, current_player):
+    return random.choices(range(7),weights = strategy_1,k=1)[0]
 
 def play_game():
     strats = {}
@@ -11,12 +31,15 @@ def play_game():
         print(f"Who will be playing as {player}?")
         print("1) Human")
         print("2) Random")
+        print("3) Weighted Random")
         print("Any other key to return to main menu")
         choice = input()
         if choice == '1':
             strats[player] = human_input
         elif choice == '2':
             strats[player] = computer_0
+        elif choice == '3':
+            strats[player] = computer_1
         else:
             return None
     print("Begining Game...")
@@ -51,18 +74,6 @@ def play_game():
             else:
                 current_player = 'X'
     return None
-
-def human_input(board, current_player):
-    c_4.print_board(board)
-    print(f"Player {current_player}, which column do you want to play in?")
-    column = int(input("Choose a column (1-7):"))-1
-    return column
-
-def computer_0(board, current_player):
-    return random.randint(0,6)
-
-def computer_1(board,current_player):
-    return random.randint(0,6)
 
 def main_menu():
     choice = None
