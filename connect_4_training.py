@@ -61,16 +61,22 @@ def human_input(board, current_player):
 def computer_0(board, current_player):
     return random.randint(0,6)
 
+def computer_1(board,current_player):
+    return random.randint(0,6)
+
 def main_menu():
     choice = None
     while choice != 2:
         print("What would you like to do?")
         print("1) New Game")
-        print("2) Quit")
+        print("2) Train")
+        print("3) Quit")
         choice = input()
         if choice == "1":
             play_game()
         elif choice == "2":
+            print("In progress")
+        elif choice == "3":
             print("Thanks for playing")
             exit()
         else:
