@@ -25,7 +25,7 @@ except:
 def computer_1(board, current_player):
     return random.choices(range(7),weights = strategy_1,k=1)[0]
 
-def play_game():
+def choose_players():
     strats = {}
     for player in ['X','O']:
         print(f"Who will be playing as {player}?")
@@ -42,10 +42,16 @@ def play_game():
             strats[player] = computer_1
         else:
             return None
+    return strats
+
+def play_game(strats):
+    if strats == None:
+        return None
     print("Begining Game...")
     board = c_4.create_board()
     current_player = 'X'
     game_on = True
+    winner = None
     attempts = 0
     while game_on and attempts < 10:
         column = strats[current_player](board,current_player)
@@ -63,6 +69,7 @@ def play_game():
             if c_4.check_winner(board, current_player):
                 c_4.print_board(board)
                 print("Player", current_player, "wins! :D")
+                winner = current_player
                 game_on = False
             elif c_4.board_full(board):
                 c_4.print_board(board)
@@ -73,7 +80,28 @@ def play_game():
                 current_player = 'O'
             else:
                 current_player = 'X'
+    return winner
+
+def training():
+    print("Choose a training format")
+    print("1) Gather Data, no change in behavior")
+    choice = input()
+    if choice == '1':
+        gather_stats()
     return None
+
+def gather_stats():
+    strats = choose_players()
+    print("How many games should they play?")
+    try:
+        rounds = int(input())
+    except:
+        print("Invalid round count")
+        rounds = 0    
+    outcomes = {'X':0,'O':0,'None':0}
+    for _ in range(rounds):
+        outcomes[play_game(strats)] += 1
+    print(outcomes)
 
 def main_menu():
     choice = None
@@ -84,9 +112,10 @@ def main_menu():
         print("3) Quit")
         choice = input()
         if choice == "1":
-            play_game()
+            players = choose_players()
+            play_game(players)
         elif choice == "2":
-            print("In progress")
+            training()
         elif choice == "3":
             print("Thanks for playing")
             exit()
