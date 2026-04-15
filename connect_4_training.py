@@ -23,7 +23,7 @@ except:
     json.dump(strategy_1,open('strategy1.json','w'), indent = 4)
 
 def computer_1(board, current_player):
-    return random.choices(range(7),weights = strategy_1,k=1)[0]
+    return random.choices(range(7),weights = strategy_1[current_player],k=1)[0]
 
 def choose_players():
     strats = {}
@@ -93,9 +93,12 @@ def play_game(strats):
 def training():
     print("Choose a training format")
     print("1) Gather Data, no change in behavior")
+    print("2) Train Weighted Random using Random")
     choice = input()
     if choice == '1':
         gather_stats()
+    if choice == '2':
+        train_1()
     return None
 
 def gather_stats():
@@ -109,7 +112,55 @@ def gather_stats():
     outcomes = {'X':0,'O':0,None:0}
     for _ in range(rounds):
         outcomes[play_game(strats)] += 1
+    n = outcomes['X']+outcomes['O']
+    p = outcomes['X']/(n)
+    CI = [p+2/n+2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n),p+2/n-2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n)]
     print(outcomes)
+    print(CI)
+
+def train_1():
+    strats = {'X':computer_1,'O':computer_0}
+    comp_1 = 'X'
+    print("Training weighted random using random. They will alternate sides")
+    try:
+        rounds = int(input("How many rounds should they train:"))
+    except:
+        print("Invalid round count")
+        rounds = 0
+    outcomes = []
+    for _ in range(rounds):
+        tweek = [random.randint(0,1) for _ in range(7)] #Have computer experiment
+        for n in range(7):
+            strategy_1[comp_1][n] += tweek[n]
+        winner = play_game(strats)
+        if winner != None:
+            outcomes.append(winner==comp_1)
+        if winner != comp_1: #If they didn't win, revert the change
+            for n in range(7):
+                strategy_1[comp_1][n] -= tweek[n]
+        for strat in strats: #Switch player seats
+            if strats[strat] == computer_1:
+                strats[strat] = computer_0
+            else:
+                strats[strat] = computer_1
+                comp_1 = strat
+    n = len(outcomes)//2
+    p_1 = outcomes[:n].count(True)/n
+    CI_1 = [p_1+2/n+2*(p_1*(1-p_1)/n+1/n**2)**(1/2)/(1+4/n),
+            p_1+2/n-2*(p_1*(1-p_1)/n+1/n**2)**(1/2)/(1+4/n)]
+    p_2 = outcomes[n:].count(True)/n
+    CI_2 = [p_2+2/n+2*(p_2*(1-p_2)/n+1/n**2)**(1/2)/(1+4/n),
+            p_2+2/n-2*(p_2*(1-p_2)/n+1/n**2)**(1/2)/(1+4/n)]
+    print("First half win results:")
+    print(p_1)
+    print(CI_1)
+    print("Second half win results:")
+    print(p_2)
+    print(CI_2)
+    with open("strategy1.json",'w') as file:
+        json.dump(strategy_1,file)
+
+
 
 def main_menu():
     choice = None
