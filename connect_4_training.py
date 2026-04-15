@@ -67,19 +67,27 @@ def play_game(strats):
         else:
             c_4.play_piece(board, column, current_player)
             if c_4.check_winner(board, current_player):
-                c_4.print_board(board)
-                print("Player", current_player, "wins! :D")
+                if human_input in strats.values():
+                    c_4.print_board(board)
+                print("Player", current_player, "wins!")
                 winner = current_player
                 game_on = False
             elif c_4.board_full(board):
-                c_4.print_board(board)
-                print("It's a tie! :O")
+                if human_input in strats.values():
+                    c_4.print_board(board)
+                print("It's a tie!")
                 game_on = False
             attempts = 0
             if current_player == 'X':
                 current_player = 'O'
             else:
                 current_player = 'X'
+    if attempts == 10:
+        print(f"{current_player} eliminated for excessive improper moves")
+        if current_player == 'X':
+            return 'O'
+        else:
+            return 'X'
     return winner
 
 def training():
@@ -98,7 +106,7 @@ def gather_stats():
     except:
         print("Invalid round count")
         rounds = 0    
-    outcomes = {'X':0,'O':0,'None':0}
+    outcomes = {'X':0,'O':0,None:0}
     for _ in range(rounds):
         outcomes[play_game(strats)] += 1
     print(outcomes)
