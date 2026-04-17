@@ -1,5 +1,6 @@
 import random
 import json
+from functools import partial
 
 ROWS = 6
 COLUMNS = 7
@@ -19,11 +20,21 @@ try:
     with open('strategy1.json','r') as file:
         strategy_1 = json.load(file)
 except:
-    strategy_1 = [1 for _ in range(7)]
+    strategy_1 = {'X':[1 for _ in range(7)],'O':[1 for _ in range(7)]}
     json.dump(strategy_1,open('strategy1.json','w'), indent = 4)
 
-def computer_1(board, current_player):
-    return random.choices(range(7),weights = strategy_1[current_player],k=1)[0]
+def computer_1(board, current_player, strategy):
+    return random.choices(range(7),weights = strategy[current_player],k=1)[0]
+
+try:
+    with open('strategy2.json','r') as file:
+        strategy_2 = json.load(file)
+except:
+    strategy_2 = {'X':[1 for _ in range(7)],'O':[1 for _ in range(7)]}
+    json.dump(strategy_1,open('strategy1.json','w'), indent = 4)
+
+def computer_2(board, current_player):
+    return random.choices(range(7),weights = strategy_2[current_player],k=1)[0]
 
 def choose_players():
     strats = {}
@@ -39,15 +50,15 @@ def choose_players():
         elif choice == '2':
             strats[player] = computer_0
         elif choice == '3':
-            strats[player] = computer_1
+            strats[player] = partial(computer_1, strategy = strategy_1)
         else:
             return None
     return strats
 
-def play_game(strats):
+def play_game(strats, verbose = True):
     if strats == None:
         return None
-    print("Begining Game...")
+    if verbose: print("Begining Game...")
     board = c_4.create_board()
     current_player = 'X'
     game_on = True
@@ -56,26 +67,26 @@ def play_game(strats):
     while game_on and attempts < 10:
         column = strats[current_player](board,current_player)
         if type(column) != type(0):
-            print(f"{current_player} did not give a column, trying again...")
+            if verbose: print(f"{current_player} did not give a column, trying again...")
             attempts += 1
         elif column < 0 or column >= COLUMNS:
-            print(f"{current_player} attempted to play off board, trying again...")
+            if verbose: print(f"{current_player} attempted to play off board, trying again...")
             attempts += 1
         elif not c_4.valid_move(board, column):
-            print(f"{current_player} attempted to play in a full column, trying again...")
+            if verbose: print(f"{current_player} attempted to play in a full column, trying again...")
             attempts += 1
         else:
             c_4.play_piece(board, column, current_player)
             if c_4.check_winner(board, current_player):
                 if human_input in strats.values():
                     c_4.print_board(board)
-                print("Player", current_player, "wins!")
+                if verbose: print("Player", current_player, "wins!")
                 winner = current_player
                 game_on = False
             elif c_4.board_full(board):
                 if human_input in strats.values():
                     c_4.print_board(board)
-                print("It's a tie!")
+                if verbose: print("It's a tie!")
                 game_on = False
             attempts = 0
             if current_player == 'X':
@@ -83,7 +94,7 @@ def play_game(strats):
             else:
                 current_player = 'X'
     if attempts == 10:
-        print(f"{current_player} eliminated for excessive improper moves")
+        if verbose: print(f"{current_player} eliminated for excessive improper moves")
         if current_player == 'X':
             return 'O'
         else:
@@ -111,56 +122,52 @@ def gather_stats():
         rounds = 0    
     outcomes = {'X':0,'O':0,None:0}
     for _ in range(rounds):
-        outcomes[play_game(strats)] += 1
+        outcomes[play_game(strats,verbose = False)] += 1
     n = outcomes['X']+outcomes['O']
     p = outcomes['X']/(n)
-    CI = [p+2/n+2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n),p+2/n-2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n)]
+    #CI = [p+2/n+2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n),p+2/n-2*(p*(1-p)/n+1/n**2)**(1/2)/(1+4/n)]
     print(outcomes)
-    print(CI)
+    print(p)
+    #print(CI)
 
 def train_1():
-    strats = {'X':computer_1,'O':computer_0}
-    comp_1 = 'X'
-    print("Training weighted random using random. They will alternate sides")
+    print("Training weighted random using true random.")
     try:
-        rounds = int(input("How many rounds should they train:"))
+        rounds = int(input("How many games should they play per step?:"))
     except:
         print("Invalid round count")
         rounds = 0
-    outcomes = []
-    for _ in range(rounds):
-        tweek = [random.randint(0,1) for _ in range(7)] #Have computer experiment
-        for n in range(7):
-            strategy_1[comp_1][n] += tweek[n]
-        winner = play_game(strats)
-        if winner != None:
-            outcomes.append(winner==comp_1)
-        if winner != comp_1: #If they didn't win, revert the change
-            for n in range(7):
-                strategy_1[comp_1][n] -= tweek[n]
-        for strat in strats: #Switch player seats
-            if strats[strat] == computer_1:
-                strats[strat] = computer_0
-            else:
-                strats[strat] = computer_1
-                comp_1 = strat
-    n = len(outcomes)//2
-    p_1 = outcomes[:n].count(True)/n
-    CI_1 = [p_1+2/n+2*(p_1*(1-p_1)/n+1/n**2)**(1/2)/(1+4/n),
-            p_1+2/n-2*(p_1*(1-p_1)/n+1/n**2)**(1/2)/(1+4/n)]
-    p_2 = outcomes[n:].count(True)/n
-    CI_2 = [p_2+2/n+2*(p_2*(1-p_2)/n+1/n**2)**(1/2)/(1+4/n),
-            p_2+2/n-2*(p_2*(1-p_2)/n+1/n**2)**(1/2)/(1+4/n)]
-    print("First half win results:")
-    print(p_1)
-    print(CI_1)
-    print("Second half win results:")
-    print(p_2)
-    print(CI_2)
+    try:
+        step = float(input("How big of a stepdo we take?:"))
+    except:
+        print("Invalid step size")
+        rounds = 0
+    sides = ['X','O']
+    for side in sides:
+        print(f"Starting {side} strategy:{strategy_1[side]}")
+        if side == 'X':
+            other = 'O'
+        else:
+            other = 'X'
+        outcomes = {'X':0,'O':0,None:0}
+        strats = {side:partial(computer_1,strategy = strategy_1), other: computer_0}
+        for _ in range(rounds):
+            outcomes[play_game(strats, verbose = False)] += 1
+        starting_win_rate = outcomes[side]/(rounds-outcomes[None])
+        win_rates = [None for _ in range(7)]
+        for d in range(7):
+            strategy = {s:[j for j in strategy_1[s]] for s in sides}
+            strategy[side][d] += step
+            outcomes = {'X':0,'O':0,None:0}
+            strats = {side:partial(computer_1,strategy = strategy), other: computer_0}
+            for _ in range(rounds):
+                outcomes[play_game(strats, verbose = False)] += 1
+            win_rates[d] = outcomes[side]/(rounds-outcomes[None])
+        for d in range(7):
+            strategy_1[side][d] += (win_rates[d]-starting_win_rate)*step
+        print(f"New {side} strategy: {strategy_1[side]}")
     with open("strategy1.json",'w') as file:
         json.dump(strategy_1,file)
-
-
 
 def main_menu():
     choice = None
