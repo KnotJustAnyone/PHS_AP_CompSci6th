@@ -136,3 +136,10 @@ while True:
 
     # Move to next player
     current_player = (current_player + direction) % num_players
+
+playable_indices = [
+    i for i, card in enumerate(hands[current_player])
+    if is_playable(card, discard_pile[-1])
+]
+# This calls my developed function (is_playable) on each card in the player's hand
+# to determine which cards are valid moves
